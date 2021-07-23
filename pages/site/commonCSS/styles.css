@@ -1,0 +1,12 @@
+:root {
+  --primary: #e0c190;
+  --dark: #634e2c;
+  --light: #f5e5cb;
+  --background: #e8dac3;
+  --shadow: 0 1px 5px rgba(104, 104, 104, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}

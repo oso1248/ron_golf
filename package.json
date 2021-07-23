@@ -1,0 +1,35 @@
+{
+  "name": "node_clean",
+  "version": "1.0.0",
+  "description": "Start Up Site",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oso1248/node_clean.git"
+  },
+  "author": "Adam Coulson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oso1248/node_clean.git"
+  },
+  "homepage": "",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-pg-simple": "^6.2.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "joi": "^17.4.1",
+    "knex": "^0.21.5",
+    "luxon": "^1.26.0",
+    "pg": "^8.3.3",
+    "pg-connection-string": "^2.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
