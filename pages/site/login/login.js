@@ -48,6 +48,7 @@ async function login() {
 
     if (res.message === 'pass') {
       setCookie('perm', res.permissions, '4320', '/');
+      alert('Success');
       window.location.href = '../index.html';
     } else {
       throw res.message;
