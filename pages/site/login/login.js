@@ -38,9 +38,7 @@ function clearInputElement(inputElement) {
 }
 
 // Login
-async function login(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
+async function login() {
   try {
     let data = {};
     data.username = document.getElementById('username').value;
@@ -50,6 +48,7 @@ async function login(ev) {
 
     if (res.message === 'pass') {
       setCookie('perm', res.permissions, '4320', '/');
+      alert('Success');
       window.location.href = '../index.html';
     } else {
       throw res.message;
@@ -60,9 +59,7 @@ async function login(ev) {
 }
 
 // Register
-async function register(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
+async function register() {
   let data = {};
   data.username = document.getElementById('registerUsername').value;
   data.email = document.getElementById('registerEmail').value;
@@ -156,9 +153,17 @@ document.addEventListener('DOMContentLoaded', (ev) => {
   });
 
   //Login
-  formLogin.addEventListener('submit', login);
+  formLogin.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    login();
+  });
+
   // Register
-  formRegister.addEventListener('submit', register);
+  formRegister.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    register();
+  });
 
   // form validation
   document.querySelectorAll('.form__input').forEach((inputElement) => {
