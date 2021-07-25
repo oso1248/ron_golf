@@ -1,9 +1,8 @@
-const schema = require('../validations/valUsers');
-
+const schema = require('./valAuth');
 const express = require('express');
 const db = require('../dbConfig');
 const bcrypt = require('bcryptjs');
-const { json } = require('express');
+// const { json } = require('express');
 const router = express.Router();
 
 async function getPass(name) {

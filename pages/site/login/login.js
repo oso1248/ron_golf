@@ -1,10 +1,6 @@
 const formLogin = document.getElementById('login');
 const formRegister = document.getElementById('register');
 
-let regexPass = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/gm);
-let regexName = new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm);
-let regexEmail = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
-
 // Cookies
 function setCookie(cookieName, cookieValue, hoursToExpire, path, domain) {
   let date = new Date();
@@ -71,15 +67,19 @@ async function register() {
 
   let fails = validateRegister(data);
   console.log(fails.length);
+  console.log(fails);
   if (fails.length === 0) {
     console.log('send');
     sendRegister(data);
   } else {
     setFormMessage(formRegister, `error`, `form validation error`);
   }
-  sendRegister(data);
 }
 function validateRegister(data) {
+  let regexPass = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/gm);
+  let regexName = new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm);
+  let regexEmail = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
+
   let failures = [];
 
   if (!data.username) {
@@ -101,7 +101,7 @@ function validateRegister(data) {
   if (!data.password) {
     failures.push({ input: 'password', msg: 'required' });
     data.password = null;
-  } else if (!regexPass.test(data.password)) {
+  } else if (regexPass.test(data.password) === false) {
     failures.push({ input: 'password', msg: 'invalid' });
     data.password = null;
   }
@@ -110,7 +110,6 @@ function validateRegister(data) {
     failures.push({ input: 'confirm password', msg: 'required' });
     data.password2 = null;
   } else if (data.password != data.password2) {
-    console.log(data.password, `\n`, data.password2);
     failures.push({ input: 'passwords', msg: 'do not match' });
     data.password = null;
     data.password2 = null;
@@ -175,7 +174,8 @@ document.addEventListener('DOMContentLoaded', (ev) => {
     // Register From
     //Username
     inputElement.addEventListener('blur', async (ev) => {
-      if (ev.target.id === `registerUsername` && ev.target.value.length > 0 && !regexName.test(ev.target.value)) {
+      let regex = new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm);
+      if (ev.target.id === `registerUsername` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
         setInputError(inputElement, `8-20 Characters No Special Characters`);
       } else if (ev.target.id === `registerUsername` && ev.target.value.length > 0) {
         try {
@@ -201,7 +201,8 @@ document.addEventListener('DOMContentLoaded', (ev) => {
 
     // Email
     inputElement.addEventListener('blur', async (ev) => {
-      if (ev.target.id === `registerEmail` && ev.target.value.length > 0 && !regexEmail.test(ev.target.value)) {
+      let regex = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
+      if (ev.target.id === `registerEmail` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
         setInputError(inputElement, `Enter A Valid Email.`);
       } else if (ev.target.id === `registerEmail` && ev.target.value.length > 0) {
         try {
@@ -227,7 +228,8 @@ document.addEventListener('DOMContentLoaded', (ev) => {
 
     //Password
     inputElement.addEventListener('blur', (ev) => {
-      if (ev.target.id === `registerPassword` && ev.target.value.length > 0 && !regexPass.test(ev.target.value)) {
+      let regex = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/gm);
+      if (ev.target.id === `registerPassword` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
         setInputError(inputElement, `Uppercase; Lowercase; Number; Special; Minimum 8 Characters`);
       }
     });

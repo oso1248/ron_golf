@@ -10,9 +10,19 @@
     <title>Home</title>
   </head>
   <body>
-    <div class="section">
-      <h1>Home</h1>
-      <h3 id="logout">Log Out</h3>
+    <div class="section section__nav">
+      <h1 class="header header__main">Home</h1>
+      <nav class="main-nav">
+        <ul class="">
+          <li><a href="">Home</a></li>
+          <li style="display: block" id=""><a href="./golfers/pages/golfers_home.html">Golfers</a></li>
+          <li style="display: block" id=""><a href="./courses/pages/courses_home.html">Courses</a></li>
+          <li style="display: block" id=""><a href="./statistics/pages/statistics_home.html">Statistics</a></li>
+          <li style="display: block" id=""><a href="./play/pages/play_home.html">Play</a></li>
+          <li style="display: none" id="perm4"><a href="./admin/pages/admin_home.html">Admin</a></li>
+          <li><a id="logout">Log Out</a></li>
+        </ul>
+      </nav>
     </div>
     <script src="./commonJS/index.js"></script>
     <script src="./serviceworker.js"></script>

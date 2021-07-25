@@ -61,6 +61,13 @@ async function logout() {
     });
 }
 
+const perm = getCookie(`perm`);
+const perm4 = document.getElementById(`perm4`);
+
+if (perm >= 4) {
+  perm4.style.display = 'block';
+}
+
 let logOutButton = document.getElementById('logout');
 if (logOutButton) {
   document.getElementById('logout').addEventListener('click', logout);
