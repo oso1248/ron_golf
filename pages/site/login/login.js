@@ -141,117 +141,106 @@ async function sendRegister(data) {
 
 // DOM loaded
 document.addEventListener('DOMContentLoaded', (ev) => {
-  document.getElementById(`linkRegister`).addEventListener(`click`, (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    formLogin.classList.add(`form--hidden`);
-    formRegister.classList.remove(`form--hidden`);
-  });
-  document.getElementById(`linkLogin`).addEventListener(`click`, (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    formLogin.classList.remove(`form--hidden`);
-    formRegister.classList.add(`form--hidden`);
-  });
-
-  //Login
-
-  // Register
-  formRegister.addEventListener('click', async (ev) => {
-    ev.preventDefault();
-    register();
-  });
-
-  // form validation
-  document.querySelectorAll('.form__input').forEach((inputElement) => {
-    // Clear All Form Errors And Specific Input Errors On Input
-    inputElement.addEventListener('input', (ev) => {
-      clearInputElement(inputElement);
-      clearFormMessage(formRegister);
-      clearFormMessage(formLogin);
-    });
-
-    // Register From
-    //Username
-    inputElement.addEventListener('blur', async (ev) => {
-      let regex = new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm);
-      if (ev.target.id === `registerUsername` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
-        setInputError(inputElement, `8-20 Characters No Special Characters`);
-      } else if (ev.target.id === `registerUsername` && ev.target.value.length > 0) {
-        try {
-          let res = await axios.post('/api/auth/register/get/user', { username: ev.target.value });
-
-          if (res.data.details.length > 0) {
-            res = res.data.details[0];
-          } else {
-            return;
-          }
-
-          if (res.username === ev.target.value) {
-            setInputError(inputElement, `Username Taken`);
-          } else if (res.message) {
-            let err = res.message;
-            throw err;
-          }
-        } catch (err) {
-          setInputError(inputElement, err);
-        }
-      }
-    });
-
-    // Email
-    inputElement.addEventListener('blur', async (ev) => {
-      let regex = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
-      if (ev.target.id === `registerEmail` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
-        setInputError(inputElement, `Enter A Valid Email.`);
-      } else if (ev.target.id === `registerEmail` && ev.target.value.length > 0) {
-        try {
-          let res = await axios.post('/api/auth/register/get/email', { email: ev.target.value });
-
-          if (res.data.details.length > 0) {
-            res = res.data.details[0];
-          } else {
-            return;
-          }
-
-          if (res.email === ev.target.value) {
-            setInputError(inputElement, `Email Taken`);
-          } else if (res.message) {
-            let err = res.message;
-            throw err;
-          }
-        } catch (err) {
-          setInputError(inputElement, err);
-        }
-      }
-    });
-
-    //Password
-    inputElement.addEventListener('blur', (ev) => {
-      let regex = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/gm);
-      if (ev.target.id === `registerPassword` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
-        setInputError(inputElement, `Uppercase; Lowercase; Number; Special; Minimum 8 Characters`);
-      }
-    });
-    inputElement.addEventListener('blur', (ev) => {
-      let confirmPassword = document.getElementById('confirmPassword');
-      if (ev.target.id === `registerPassword` && ev.target.value.length > 0 && confirmPassword.value.length > 0 && ev.target.value != confirmPassword) {
-        setInputError(confirmPassword, `Passwords Do Not Match`);
-      }
-    });
-    inputElement.addEventListener('input', (ev) => {
-      let confirmPassword = document.getElementById('confirmPassword');
-      if (ev.target.id === `registerPassword` && confirmPassword.value.length > 0) {
-        clearInputElement(confirmPassword);
-      }
-    });
-
-    // Confirm Password
-    inputElement.addEventListener('blur', (ev) => {
-      let pass = document.getElementById('registerPassword').value;
-      if (ev.target.id === `confirmPassword` && ev.target.value.length > 0 && ev.target.value != pass) {
-        setInputError(inputElement, `Passwords Do Not Match`);
-      }
-    });
-  });
+  // document.getElementById(`linkRegister`).addEventListener(`click`, (ev) => {
+  //   ev.preventDefault();
+  //   ev.stopPropagation();
+  //   formLogin.classList.add(`form--hidden`);
+  //   formRegister.classList.remove(`form--hidden`);
+  // });
+  // document.getElementById(`linkLogin`).addEventListener(`click`, (ev) => {
+  //   ev.preventDefault();
+  //   ev.stopPropagation();
+  //   formLogin.classList.remove(`form--hidden`);
+  //   formRegister.classList.add(`form--hidden`);
+  // });
+  // //Login
+  // // Register
+  // formRegister.addEventListener('click', async (ev) => {
+  //   ev.preventDefault();
+  //   register();
+  // });
+  // // form validation
+  // document.querySelectorAll('.form__input').forEach((inputElement) => {
+  //   // Clear All Form Errors And Specific Input Errors On Input
+  //   inputElement.addEventListener('input', (ev) => {
+  //     clearInputElement(inputElement);
+  //     clearFormMessage(formRegister);
+  //     clearFormMessage(formLogin);
+  //   });
+  //   // Register From
+  //   //Username
+  //   inputElement.addEventListener('blur', async (ev) => {
+  //     let regex = new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm);
+  //     if (ev.target.id === `registerUsername` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
+  //       setInputError(inputElement, `8-20 Characters No Special Characters`);
+  //     } else if (ev.target.id === `registerUsername` && ev.target.value.length > 0) {
+  //       try {
+  //         let res = await axios.post('/api/auth/register/get/user', { username: ev.target.value });
+  //         if (res.data.details.length > 0) {
+  //           res = res.data.details[0];
+  //         } else {
+  //           return;
+  //         }
+  //         if (res.username === ev.target.value) {
+  //           setInputError(inputElement, `Username Taken`);
+  //         } else if (res.message) {
+  //           let err = res.message;
+  //           throw err;
+  //         }
+  //       } catch (err) {
+  //         setInputError(inputElement, err);
+  //       }
+  //     }
+  //   });
+  //   // Email
+  //   inputElement.addEventListener('blur', async (ev) => {
+  //     let regex = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
+  //     if (ev.target.id === `registerEmail` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
+  //       setInputError(inputElement, `Enter A Valid Email.`);
+  //     } else if (ev.target.id === `registerEmail` && ev.target.value.length > 0) {
+  //       try {
+  //         let res = await axios.post('/api/auth/register/get/email', { email: ev.target.value });
+  //         if (res.data.details.length > 0) {
+  //           res = res.data.details[0];
+  //         } else {
+  //           return;
+  //         }
+  //         if (res.email === ev.target.value) {
+  //           setInputError(inputElement, `Email Taken`);
+  //         } else if (res.message) {
+  //           let err = res.message;
+  //           throw err;
+  //         }
+  //       } catch (err) {
+  //         setInputError(inputElement, err);
+  //       }
+  //     }
+  //   });
+  //   //Password
+  //   inputElement.addEventListener('blur', (ev) => {
+  //     let regex = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/gm);
+  //     if (ev.target.id === `registerPassword` && ev.target.value.length > 0 && !regex.test(ev.target.value)) {
+  //       setInputError(inputElement, `Uppercase; Lowercase; Number; Special; Minimum 8 Characters`);
+  //     }
+  //   });
+  //   inputElement.addEventListener('blur', (ev) => {
+  //     let confirmPassword = document.getElementById('confirmPassword');
+  //     if (ev.target.id === `registerPassword` && ev.target.value.length > 0 && confirmPassword.value.length > 0 && ev.target.value != confirmPassword) {
+  //       setInputError(confirmPassword, `Passwords Do Not Match`);
+  //     }
+  //   });
+  //   inputElement.addEventListener('input', (ev) => {
+  //     let confirmPassword = document.getElementById('confirmPassword');
+  //     if (ev.target.id === `registerPassword` && confirmPassword.value.length > 0) {
+  //       clearInputElement(confirmPassword);
+  //     }
+  //   });
+  //   // Confirm Password
+  //   inputElement.addEventListener('blur', (ev) => {
+  //     let pass = document.getElementById('registerPassword').value;
+  //     if (ev.target.id === `confirmPassword` && ev.target.value.length > 0 && ev.target.value != pass) {
+  //       setInputError(inputElement, `Passwords Do Not Match`);
+  //     }
+  //   });
+  // });
 });
