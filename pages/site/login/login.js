@@ -38,6 +38,11 @@ function clearInputElement(inputElement) {
 }
 
 // Login
+formLogin.addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  ev.stopPropagation();
+  login();
+});
 async function login() {
   try {
     let data = {};
@@ -153,11 +158,6 @@ document.addEventListener('DOMContentLoaded', (ev) => {
   });
 
   //Login
-  formLogin.addEventListener('submit', (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    login();
-  });
 
   // Register
   formRegister.addEventListener('submit', async (ev) => {
