@@ -140,11 +140,13 @@ async function sendRegister(data) {
 document.addEventListener('DOMContentLoaded', (ev) => {
   document.getElementById(`linkRegister`).addEventListener(`click`, (ev) => {
     ev.preventDefault();
+    ev.stopPropagation();
     formLogin.classList.add(`form--hidden`);
     formRegister.classList.remove(`form--hidden`);
   });
   document.getElementById(`linkLogin`).addEventListener(`click`, (ev) => {
     ev.preventDefault();
+    ev.stopPropagation();
     formLogin.classList.remove(`form--hidden`);
     formRegister.classList.add(`form--hidden`);
   });
@@ -152,7 +154,7 @@ document.addEventListener('DOMContentLoaded', (ev) => {
   //Login
   formLogin.addEventListener('submit', (ev) => {
     ev.preventDefault();
-    deleteCookie('perm');
+    ev.stopPropagation();
     login();
   });
 
