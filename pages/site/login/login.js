@@ -38,7 +38,10 @@ function clearInputElement(inputElement) {
 }
 
 // Login
-async function login() {
+document.getElementById('login').addEventListener('click', login);
+async function login(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
   try {
     let data = {};
     data.username = document.getElementById('username').value;
@@ -48,7 +51,6 @@ async function login() {
 
     if (res.message === 'pass') {
       setCookie('perm', res.permissions, '4320', '/');
-      alert('Success');
       window.location.href = '../index.html';
     } else {
       throw res.message;
@@ -153,11 +155,6 @@ document.addEventListener('DOMContentLoaded', (ev) => {
   });
 
   //Login
-  formLogin.addEventListener('click', (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    login();
-  });
 
   // Register
   formRegister.addEventListener('click', async (ev) => {
