@@ -46,6 +46,7 @@ const user_update_name = Joi.object({
     .pattern(new RegExp(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/))
     .required(),
   handicap: Joi.number().integer().min(0).max(100),
+  permissions: Joi.number().integer().min(1).max(5),
 });
 const user_delete_name = Joi.object({
   name: Joi.string().required(),

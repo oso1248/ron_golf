@@ -46,7 +46,7 @@ async function user_get_name(data) {
 async function user_update_name(data) {
   let { rows } = await db.raw(`
     UPDATE users
-    SET email = '${data.email}', phone = '${data.phone}', handicap = '${data.handicap}'
+    SET email = '${data.email}', phone = '${data.phone}', handicap = '${data.handicap}', permissions = ${data.permissions}
     WHERE name = '${data.name}'
     RETURNING name;
   `);

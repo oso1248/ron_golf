@@ -45,6 +45,7 @@ async function user_name_selected() {
       document.getElementById('phone').value = res.data.details[0].phone;
       document.getElementById('email').value = res.data.details[0].email;
       document.getElementById('handicap').value = res.data.details[0].handicap;
+      document.getElementById(res.data.details[0].permissions).selected = `selected`;
     }
   } catch (err) {
     alert(err);
@@ -53,7 +54,7 @@ async function user_name_selected() {
 function read_update_name() {
   const form = document.getElementById('form_update');
   let data = {};
-  for (let i = 0; i < form.length - 5; i++) {
+  for (let i = 0; i < form.length - 6; i++) {
     let id = form.elements[i].id;
     let name = form.elements[i].value;
     data[id] = name;
@@ -105,6 +106,7 @@ async function validate_update(data) {
   let regex_email = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
   let regex_phone = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
   let regex_handicap = new RegExp(/^[0-9][0-9]?$|^100$/gm);
+  let regex_permissions = new RegExp(/^[1-5]$/gm);
 
   let fails = ``;
 
@@ -116,7 +118,6 @@ async function validate_update(data) {
     data.email = data.email.toLowerCase();
     let res = await axios.post('/api/admin/user_get_email', { email: data.email }).catch((err) => alert(err));
     if (res.data.details.length > 0) {
-      console.log('full array');
       if (data.name != res.data.details[0].name) {
         fails = fails + `\nEmail Taken\n`;
         document.getElementById('email').value = ``;
@@ -134,6 +135,11 @@ async function validate_update(data) {
 
   if (!regex_handicap.test(data.handicap)) {
     fails = fails + `\nHandicap Between 0-54 Required\n`;
+    data.handicap = null;
+  }
+
+  if (!regex_permissions.test(data.permissions)) {
+    fails = fails + `\nAccess Level Between 1-5 Required\n`;
     data.handicap = null;
   }
 

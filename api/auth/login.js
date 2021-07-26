@@ -60,7 +60,6 @@ router.post('/login', async (req, res) => {
 
     let user = await getPass(result.username);
     user = user[0];
-    console.log(user.password);
     if (user && bcrypt.compareSync(result.password, user.password)) {
       req.session.user = {
         username: user.username,
@@ -72,7 +71,6 @@ router.post('/login', async (req, res) => {
       throw err;
     }
   } catch (err) {
-    console.log(err);
     res.status(resStatus).json(err);
   }
 });
