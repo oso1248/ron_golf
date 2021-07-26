@@ -6,7 +6,8 @@ const user_view = Joi.object({
 });
 const user_add = Joi.object({
   username: Joi.string()
-    .pattern(new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/))
+    // .pattern(new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/))
+    .pattern(new RegExp(/^(?=.*\d).{8,}$/))
     .required(),
   name: Joi.string()
     .pattern(new RegExp(/^\b(?!.*?\s{2})[A-Za-z ]{4,50}\b$/))

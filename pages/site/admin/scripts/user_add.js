@@ -11,16 +11,14 @@ String.prototype.toNonAlpha = function (spaces) {
   }
 };
 
-async function form_add(ev) {
-  ev.preventDefault();
-  ev.stopPropagation();
-
-  let data = read_add();
-  // let fails = await validate_add(data);
-  // if (fails.length > 0) {
-  //   alert(`Problems:\n ${fails}`);
-  //   return;
-  // }
+async function form_add() {
+  let data = await read_add();
+  console.log(data);
+  let fails = await validate_add(data);
+  if (fails.length > 0) {
+    alert(`Problems:\n ${fails}`);
+    return;
+  }
   upload_add(data);
 }
 function read_add() {
@@ -34,7 +32,8 @@ function read_add() {
   return data;
 }
 async function validate_add(data) {
-  let regex_username = new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm);
+  // let regex_username = new RegExp(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/gm);
+  let regex_username = new RegExp(/^(?=.*\d).{8,}$/gm);
   let regex_name = new RegExp(/^\b(?!.*?\s{2})[A-Za-z ]{4,50}\b$/gm);
   let regex_email = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
   let regex_phone = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -128,7 +127,15 @@ async function upload_add(data) {
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {
-  document.getElementById('btnSubmit').addEventListener('click', form_add);
+  ev.preventDefault();
+  ev.stopPropagation();
+
+  document.getElementById('btnSubmit').addEventListener('click', (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    form_add();
+  });
 
   document.getElementById('btnClear').addEventListener('click', (ev) => {
     ev.preventDefault();
