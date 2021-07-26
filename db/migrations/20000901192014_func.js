@@ -12,6 +12,27 @@ exports.up = async function (knex) {
     $$;
   `);
 
+  // Add holes on new course added
+  await knex.raw(`
+   CREATE OR REPLACE FUNCTION insert_hole_count() RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE 
+	    hole_count INTEGER;
+    BEGIN
+
+	    hole_count = new.hole_count;
+
+      FOR i IN 1..hole_count LOOP
+        INSERT INTO course_holes (course_id, hole_number) VALUES (new.id, i);
+      END LOOP;
+
+    RETURN NULL;
+    END;
+    $$;
+  `);
+
   // session delete orphan sessions
   await knex.raw(`
     CREATE OR REPLACE FUNCTION delete_orphan_sessions() RETURNS TRIGGER
@@ -29,6 +50,9 @@ exports.up = async function (knex) {
 exports.down = async function (knex) {
   await knex.raw(`
     DROP FUNCTION IF EXISTS update_timestamp() CASCADE;
+  `);
+  await knex.raw(`
+    DROP FUNCTION IF EXISTS insert_hole_count() CASCADE;
   `);
   await knex.raw(`
     DROP FUNCTION IF EXISTS delete_orphan_sessions() CASCADE;

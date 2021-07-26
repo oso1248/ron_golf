@@ -77,7 +77,6 @@ async function form_update(ev) {
   let response = await upload_update(data);
   alert(response);
   document.getElementById('form_update').reset();
-  user_name_load_select();
 }
 function read_update() {
   const form = document.getElementById('form_update');

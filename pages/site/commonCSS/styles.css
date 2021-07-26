@@ -108,11 +108,21 @@ a:hover {
 select,
 option {
   text-align: center;
+  justify-content: center;
   margin: 5px;
   width: 40%;
   font-size: 20px;
   height: 44px;
   text-align-last: center;
+  border-radius: 10px;
+}
+#address {
+  resize: none;
+  line-height: 1.4;
+  width: 40%;
+  margin: 5px;
+  text-align: center;
+  font-size: 20px;
   border-radius: 10px;
 }
 
@@ -167,6 +177,10 @@ tabulator-print-footer {
     width: 70%;
   }
 
+  #address {
+    width: 70%;
+  }
+
   .button button {
     width: 35%;
   }
@@ -186,6 +200,10 @@ tabulator-print-footer {
   .form input,
   select,
   option {
+    width: 90%;
+  }
+
+  #address {
     width: 90%;
   }
 

@@ -52,7 +52,69 @@ const user_delete_name = Joi.object({
   name: Joi.string().required(),
 });
 
+// Courses
+const course_view = Joi.object({
+  view: Joi.string().valid(true),
+});
+const course_add = Joi.object({
+  name: Joi.string()
+    .pattern(new RegExp(/^[0-9A-Za-z ]{1,100}$/))
+    .required(),
+  phone: Joi.string()
+    .pattern(new RegExp(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/))
+    .required(),
+  email: Joi.string()
+    .lowercase()
+    .pattern(new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/))
+    .required(),
+  rating_course: Joi.string()
+    .pattern(new RegExp(/^\d{0,3}(\.\d{1,2})?$/))
+    .required(),
+  rating_slope: Joi.string()
+    .pattern(new RegExp(/^\d{0,3}(\.\d{1,2})?$/))
+    .required(),
+  hole_count: Joi.string()
+    .pattern(new RegExp(/9|18|27/))
+    .required(),
+  address: Joi.string()
+    // .pattern(new RegExp(/^(\d+) ?([A-Za-z](?= ))? (.*?) ([^ ]+?) ?((?<= )APT)? ?((?<= )\d*)?$/))
+    .pattern(new RegExp(/^[A-Za-z0-9 ]{1,120}$/))
+
+    .required(),
+});
+const course_get_email = Joi.object({
+  email: Joi.string()
+    .lowercase()
+    .pattern(new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/))
+    .required(),
+});
+const course_get_name = Joi.object({
+  name: Joi.string().required(),
+});
+const course_update_name = Joi.object({
+  name: Joi.string()
+    .pattern(new RegExp(/^[0-9A-Za-z ]{1,100}$/))
+    .required(),
+  phone: Joi.string()
+    .pattern(new RegExp(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/))
+    .required(),
+  email: Joi.string()
+    .lowercase()
+    .pattern(new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/))
+    .required(),
+  rating_course: Joi.string()
+    .pattern(new RegExp(/^\d{0,3}(\.\d{1,2})?$/))
+    .required(),
+  rating_slope: Joi.string()
+    .pattern(new RegExp(/^\d{0,3}(\.\d{1,2})?$/))
+    .required(),
+});
+const course_delete_name = Joi.object({
+  name: Joi.string().required(),
+});
+
 module.exports = {
+  //User
   user_view,
   user_add,
   user_get_username,
@@ -60,4 +122,11 @@ module.exports = {
   user_get_name,
   user_update_name,
   user_delete_name,
+  // Course
+  course_view,
+  course_add,
+  course_get_email,
+  course_get_name,
+  course_update_name,
+  course_delete_name,
 };

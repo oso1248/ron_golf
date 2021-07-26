@@ -7,6 +7,7 @@ function user_view() {
       tbl_view = new Tabulator('#user_view_table', {
         printHeader: '<h1>Golfers<h1>',
         resizableColumns: false,
+        selectable: false,
         height: '100%',
         layout: 'fitDataFill',
         data: tableData,

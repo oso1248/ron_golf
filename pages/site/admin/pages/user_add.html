@@ -4,11 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width, height=device-height" />
 
-    <script src="../../dist/xlsx.min.js" type="text/javascript"></script>
     <script src="../../dist/axios.min.js" type="text/javascript"></script>
-    <script src="../../dist/luxon.min.js" type="text/javascript"></script>
-    <script src="../../dist/tabulator.min.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="../../dist/tabulator.min.css" />
 
     <link rel="stylesheet" href="../../commonCSS/styles.css" />
     <link rel="stylesheet" href="../styles/user_add.css" />
@@ -34,8 +30,7 @@
       <form class="form" id="form_add" autocorrect="off" spellcheck="false" autocomplete="off" action="">
         <h1>Add User</h1>
         <div class="input">
-          <!-- <input readonly onfocus="this.removeAttribute('readonly');" type="text" id="username" placeholder="username" /> -->
-          <input type="text" id="username" placeholder="username" />
+          <input autofocus type="text" id="username" placeholder="username" />
         </div>
         <div class="input">
           <input type="text" id="name" placeholder="Name" />
@@ -50,7 +45,6 @@
           <input type="number" min="0" max="54" id="handicap" placeholder="Starting Handicap" />
         </div>
         <div class="input">
-          <!-- <input readonly onfocus="this.removeAttribute('readonly');" type="password" id="password" placeholder="Password" /> -->
           <input type="password" id="password" placeholder="Password" />
         </div>
         <div class="input">
