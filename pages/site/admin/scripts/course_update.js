@@ -73,7 +73,7 @@ async function form_update(ev) {
     alert(`Problems:\n${fails}`);
     return;
   }
-  console.log(data);
+
   let response = await upload_update(data);
   alert(response);
   document.getElementById('form_update').reset();

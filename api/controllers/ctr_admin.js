@@ -171,3 +171,29 @@ exports.course_delete_name = async function (req, res, next) {
     res.status(resStatus).json(err);
   }
 };
+
+// Holes
+exports.hole_get_name = async function (req, res, next) {
+  let resStatus = 200;
+  try {
+    let result = await validate.hole_get_name.validateAsync(req.body);
+    let response = await db.hole_get_name(result);
+    res.status(resStatus).json({ details: response });
+  } catch (err) {
+    resStatus = 500;
+    res.status(resStatus).json(err);
+  }
+};
+exports.hole_update_name = async function (req, res, next) {
+  let resStatus = 200;
+  try {
+    let result = await validate.hole_update_name.validateAsync(req.body);
+    let response = await db.hole_update_name(result);
+    res.status(resStatus).json({ details: response });
+  } catch (err) {
+    if (!err.details[0].message) {
+      resStatus = 400;
+    }
+    res.status(resStatus).json(err);
+  }
+};

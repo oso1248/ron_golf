@@ -121,6 +121,40 @@ async function course_delete_name(data) {
   return rows;
 }
 
+// Holes
+async function hole_get_name(data) {
+  let { rows } = await db.raw(`
+    SELECT cor.name, hol.id, hol.hole_number, hol.hole_par, hol.hole_distance, hol.hole_handicap
+    FROM course_main AS cor
+    JOIN course_holes AS hol ON hol.course_id = cor.id
+    WHERE cor.name = '${data.name}'
+    ORDER BY hol.hole_number;
+  `);
+  return rows;
+}
+async function hole_update_name(data) {
+  let { rows } = await db.raw(`
+    WITH rows AS (
+    UPDATE course_holes AS h SET
+      hole_par = h2.hole_par,
+      hole_distance = h2.hole_distance,
+      hole_handicap = h2.hole_handicap
+    from (values ${data.values}) as h2(id, hole_par, hole_distance, hole_handicap)
+    where h2.id = h.id
+    RETURNING h.id)
+    SELECT COUNT(id) AS count
+    FROM rows; 
+  `);
+  return rows;
+}
+
+// update course_holes AS h SET
+//       hole_par = h2.hole_par,
+//       hole_distance = h2.hole_distance,
+//       hole_handicap = h2.hole_handicap
+//     FROM (values ${data.values}) AS h2(id, hole_par, hole_distance, hole_handicap)
+//     WHERE h2.id = h.id;
+
 module.exports = {
   // User
   user_view,
@@ -138,4 +172,7 @@ module.exports = {
   course_get_name,
   course_update_name,
   course_delete_name,
+  // Holes
+  hole_get_name,
+  hole_update_name,
 };

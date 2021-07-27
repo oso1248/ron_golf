@@ -113,6 +113,14 @@ const course_delete_name = Joi.object({
   name: Joi.string().required(),
 });
 
+// Holes
+const hole_get_name = Joi.object({
+  name: Joi.string().required(),
+});
+const hole_update_name = Joi.object({
+  values: Joi.string().required(),
+});
+
 module.exports = {
   //User
   user_view,
@@ -129,4 +137,7 @@ module.exports = {
   course_get_name,
   course_update_name,
   course_delete_name,
+  // Holes
+  hole_get_name,
+  hole_update_name,
 };
