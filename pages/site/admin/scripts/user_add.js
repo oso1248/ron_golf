@@ -43,7 +43,7 @@ async function validate_add(data) {
   let fails = ``;
 
   if (!regex_username.test(data.username)) {
-    fails = fails + `\nUsername Must Be Between 8-20 Characters\nAnd Cannot Contain Special Characters\n`;
+    fails = fails + `\nUsername Must Be Between 8-20 Characters\nMust Contain One Number\nAnd Cannot Contain Special Characters\n`;
     document.getElementById('username').value = ``;
     data.username = null;
   } else {

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width, height=device-height" />
+
+    <script src="../../dist/axios.min.js" type="text/javascript"></script>
+    <script src="../../dist/luxon.min.js"></script>
+
+    <link rel="stylesheet" href="../../commonCSS/styles.css" />
+    <link rel="stylesheet" href="../styles/tournament_add.css" />
+    <title>Tournament Add</title>
+  </head>
+  <body>
+    <div class="section section__nav">
+      <h1 class="header header__main">Course Add</h1>
+      <nav class="main-nav">
+        <ul class="">
+          <li><a href="../../index.html">Home</a></li>
+          <li style="display: block" id=""><a href="../../golfers/pages/golfers_home.html">Golfers</a></li>
+          <li style="display: block" id=""><a href="../../courses/pages/courses_home.html">Courses</a></li>
+          <li style="display: block" id=""><a href="../../statistics/pages/statistics_home.html">Statistics</a></li>
+          <li style="display: block" id=""><a href="../../play/pages/play_home.html">Play</a></li>
+          <li style="display: none" id="perm4"><a href="./admin_home.html">Admin</a></li>
+          <li><a id="logout">Log Out</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="section section_form">
+      <form class="form" id="form_add" autocorrect="off" spellcheck="false" autocomplete="off" action="">
+        <h1>Add Tournament</h1>
+        <div class="input">
+          <input autofocus type="text" id="tournament_name" placeholder="Tournament Name" />
+        </div>
+        <div class="input">
+          <select name="" id="tournament_date"></select>
+        </div>
+        <div class="input">
+          <select name="" id="course_name"></select>
+        </div>
+
+        <div class="button">
+          <button class="btn" id="btnClear">Clear</button>
+          <button class="btn" id="btnSubmit">Add</button>
+        </div>
+      </form>
+    </div>
+
+    <script src="../../commonJS/index.js"></script>
+    <script src="../scripts/tournament_add.js"></script>
+  </body>
+</html>

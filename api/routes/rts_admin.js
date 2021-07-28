@@ -23,4 +23,10 @@ router.post('/course_delete_name', controller.course_delete_name);
 router.post('/hole_get_name', controller.hole_get_name);
 router.post('/hole_update_name', controller.hole_update_name);
 
+// Tournaments
+router.post('/tournament_view', controller.tournament_view);
+router.post('/tournament_add', controller.tournament_add);
+router.post('/tournament_get_name_date', controller.tournament_get_name_date);
+router.post('/tournament_delete_name', controller.tournament_delete_name);
+
 module.exports = router;

@@ -4,7 +4,7 @@ const user = [
     name: 'Adam Coulson',
     password: '$2a$06$iVjBMuxQct7LrsmEqOLmbezpBoO7L8h0Tc2PLk6LvX2ORefSk3mLi',
     email: 'adam.coulson@anheuser-busch.com',
-    phone: '307-639-1615',
+    phone: '(307) 639-1615',
     permissions: 5,
     handicap: 10,
   },

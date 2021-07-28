@@ -45,6 +45,31 @@ exports.up = async function (knex) {
     END;
     $$;
   `);
+
+  // Delete Old Rows
+  await knex.raw(`
+    CREATE OR REPLACE FUNCTION delete_old_rows_rounds() RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS
+    $$
+    BEGIN
+      DELETE FROM inv_mat_weekly WHERE created_at < NOW() - INTERVAL '1095 days';
+      RETURN NULL;
+    END;
+    $$;
+  `);
+
+  await knex.raw(`
+    CREATE OR REPLACE FUNCTION delete_old_rows_tournament_main() RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS
+    $$
+    BEGIN
+      DELETE FROM inv_mat_weekly WHERE created_at < NOW() - INTERVAL '1095 days';
+      RETURN NULL;
+    END;
+    $$;
+  `);
 };
 
 exports.down = async function (knex) {
@@ -56,5 +81,11 @@ exports.down = async function (knex) {
   `);
   await knex.raw(`
     DROP FUNCTION IF EXISTS delete_orphan_sessions() CASCADE;
+  `);
+  await knex.raw(`
+    DROP FUNCTION IF EXISTS delete_old_rows_rounds() CASCADE;
+  `);
+  await knex.raw(`
+    DROP FUNCTION IF EXISTS delete_old_rows_tournament_main() CASCADE;
   `);
 };

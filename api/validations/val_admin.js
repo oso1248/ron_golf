@@ -1,3 +1,4 @@
+const { date } = require('joi');
 const Joi = require('joi');
 
 // Users
@@ -79,7 +80,6 @@ const course_add = Joi.object({
   address: Joi.string()
     // .pattern(new RegExp(/^(\d+) ?([A-Za-z](?= ))? (.*?) ([^ ]+?) ?((?<= )APT)? ?((?<= )\d*)?$/))
     .pattern(new RegExp(/^[A-Za-z0-9 ]{1,120}$/))
-
     .required(),
 });
 const course_get_email = Joi.object({
@@ -117,8 +117,32 @@ const course_delete_name = Joi.object({
 const hole_get_name = Joi.object({
   name: Joi.string().required(),
 });
+
 const hole_update_name = Joi.object({
   values: Joi.string().required(),
+});
+
+// Tournaments
+const tournament_view = Joi.object({
+  view: Joi.string().valid(true),
+});
+const tournament_add = Joi.object({
+  tournament_name: Joi.string()
+    .pattern(new RegExp(/^(?=.{8})(.*[^0-9a-zA-Z].*)$/))
+    .required(),
+  course_name: Joi.string()
+    .pattern(new RegExp(/^[0-9A-Za-z ]{1,100}$/))
+    .required(),
+  tournament_date: Joi.string()
+    .pattern(new RegExp(/^((0|1)\d{1})-((0|1|2)\d{1})-((19|20)\d{2})/))
+    .required(),
+});
+const tournament_get_name_date = Joi.object({
+  tournament_name: Joi.string().required(),
+  tournament_date: Joi.string().required(),
+});
+const tournament_delete_name = Joi.object({
+  id: Joi.number().integer(),
 });
 
 module.exports = {
@@ -140,4 +164,9 @@ module.exports = {
   // Holes
   hole_get_name,
   hole_update_name,
+  // Tournaments
+  tournament_add,
+  tournament_view,
+  tournament_get_name_date,
+  tournament_delete_name,
 };

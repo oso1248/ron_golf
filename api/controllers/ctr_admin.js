@@ -197,3 +197,57 @@ exports.hole_update_name = async function (req, res, next) {
     res.status(resStatus).json(err);
   }
 };
+
+// Tournaments
+exports.tournament_view = async function (req, res, next) {
+  let resStatus = 200;
+  try {
+    let result = await validate.tournament_view.validateAsync(req.body);
+    let response = await db.tournament_view();
+    res.status(resStatus).json({ details: response });
+  } catch (err) {
+    resStatus = 500;
+    res.status(resStatus).json(err);
+  }
+};
+exports.tournament_add = async function (req, res, next) {
+  let resStatus = 200;
+  try {
+    let result = await validate.tournament_add.validateAsync(req.body);
+    let response = await db.tournament_add(result);
+    res.status(resStatus).json({ details: response });
+  } catch (err) {
+    if (!err.details[0].message) {
+      resStatus = 400;
+    }
+    res.status(resStatus).json(err);
+  }
+};
+exports.tournament_get_name_date = async function (req, res, next) {
+  let resStatus = 200;
+  try {
+    let result = await validate.tournament_get_name_date.validateAsync(req.body);
+
+    let response = await db.tournament_get_name_date(result);
+
+    res.status(resStatus).json({ details: response });
+  } catch (err) {
+    if (!err.details[0].message) {
+      resStatus = 400;
+    }
+    res.status(resStatus).json(err);
+  }
+};
+exports.tournament_delete_name = async function (req, res, next) {
+  let resStatus = 200;
+  try {
+    let result = await validate.tournament_delete_name.validateAsync(req.body);
+    let response = await db.tournament_delete_name(result);
+    res.status(resStatus).json({ details: response });
+  } catch (err) {
+    if (!err.details[0].message) {
+      resStatus = 400;
+    }
+    res.status(resStatus).json(err);
+  }
+};

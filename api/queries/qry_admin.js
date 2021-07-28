@@ -148,12 +148,45 @@ async function hole_update_name(data) {
   return rows;
 }
 
-// update course_holes AS h SET
-//       hole_par = h2.hole_par,
-//       hole_distance = h2.hole_distance,
-//       hole_handicap = h2.hole_handicap
-//     FROM (values ${data.values}) AS h2(id, hole_par, hole_distance, hole_handicap)
-//     WHERE h2.id = h.id;
+// Tournaments
+async function tournament_view() {
+  let { rows } = await db.raw(`
+    SELECT tor.id, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY') AS tournament_date, CONCAT_WS('-',tor.name, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY')) AS tournament_name, cor.name AS course_name, COUNT(hol.id) AS holes, SUM(hol.hole_par) AS par, SUM(hol.hole_distance) AS distance, cor.rating_course
+    FROM course_holes AS hol
+    JOIN course_main AS cor ON cor.id = hol.course_id
+    JOIN tournament_main AS tor ON tor.course_id = cor.id
+    GROUP BY tor.id, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY'), CONCAT_WS('-',tor.name, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY')), cor.name, cor.rating_course
+    ORDER BY TO_CHAR( tor.tournament_date, 'MM-DD-YYYY') DESC
+    LIMIT 50;
+  `);
+  return rows;
+}
+async function tournament_add(data) {
+  let { rows } = await db.raw(`
+    INSERT
+    INTO tournament_main (course_id, name, tournament_date)
+    VALUES ((SELECT id FROM course_main WHERE name = '${data.course_name}'), '${data.tournament_name}', '${data.tournament_date}')
+    RETURNING name AS tournament_name, TO_CHAR(tournament_date, 'MM/DD/YYYY') AS tournament_date;
+  `);
+  return rows;
+}
+async function tournament_get_name_date(data) {
+  let { rows } = await db.raw(`
+    SELECT name, tournament_date
+    FROM tournament_main
+    WHERE name = '${data.tournament_name}' AND tournament_date = '${data.tournament_date}';
+  `);
+  return rows;
+}
+async function tournament_delete_name(data) {
+  let { rows } = await db.raw(`
+    DELETE
+    FROM tournament_main
+    WHERE id = ${data.id}
+    RETURNING name as tournament_name, TO_CHAR(tournament_date, 'MM-DD-YYYY') AS tournament_date;
+  `);
+  return rows;
+}
 
 module.exports = {
   // User
@@ -175,4 +208,9 @@ module.exports = {
   // Holes
   hole_get_name,
   hole_update_name,
+  // Tournaments
+  tournament_view,
+  tournament_add,
+  tournament_get_name_date,
+  tournament_delete_name,
 };

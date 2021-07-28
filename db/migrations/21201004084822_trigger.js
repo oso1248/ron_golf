@@ -29,6 +29,22 @@ exports.up = async function (knex) {
     FOR EACH ROW
     EXECUTE PROCEDURE insert_hole_count();
   `);
+
+  // Delete Old Rows
+  await knex.raw(`
+    CREATE TRIGGER delete_old_rows_rounds_trigger
+    AFTER INSERT
+    ON rounds
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_old_rows_rounds();
+  `);
+  await knex.raw(`
+    CREATE TRIGGER delete_old_rows_tournament_main_trigger
+    AFTER INSERT
+    ON tournament_main
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_old_rows_tournament_main();
+  `);
 };
 
 exports.down = function (knex) {};
