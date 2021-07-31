@@ -63,8 +63,15 @@ async function logout() {
 
 const perm = getCookie(`perm`);
 const perm4 = document.getElementById(`perm4`);
+const perm5 = document.getElementsByClassName(`perm5`);
 
-if (perm >= 4) {
+if (perm >= 5 && perm5.length > 0) {
+  for (let i = 0; i < perm5.length; i++) {
+    perm5[i].style.display = 'block';
+  }
+}
+
+if (perm >= 4 && perm4) {
   perm4.style.display = 'block';
 }
 

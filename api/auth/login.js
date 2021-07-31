@@ -7,7 +7,7 @@ const router = express.Router();
 
 async function getPass(name) {
   let { rows } = await db.raw(`
-    SELECT username, "password", permissions
+    SELECT id, username, "password", permissions
     FROM users
     WHERE username = '${name}'
   `);
@@ -62,6 +62,7 @@ router.post('/login', async (req, res) => {
     user = user[0];
     if (user && bcrypt.compareSync(result.password, user.password)) {
       req.session.user = {
+        user_id: user.id,
         username: user.username,
         permissions: user.permissions,
       };

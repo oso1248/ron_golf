@@ -3,6 +3,8 @@ function user_view() {
   axios
     .post('/api/admin/user_view', { view: true })
     .then((res) => {
+      // console.log('statusCode: ', res.status);
+      // console.log('headers: ', res.headers);
       let tableData = res.data.details;
       tbl_view = new Tabulator('#user_view_table', {
         printHeader: '<h1>Golfers<h1>',
@@ -21,7 +23,15 @@ function user_view() {
         ],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      if (err.response) {
+        console.log(err.response);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.log(err);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

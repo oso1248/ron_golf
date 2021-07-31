@@ -36,7 +36,6 @@ function createList(api, parent, title) {
       console.error(err);
     });
 }
-
 function createListData(data, parent, title) {
   data.forEach((elem) => {
     let listItem = elem[title];
@@ -47,6 +46,7 @@ function createListData(data, parent, title) {
   });
 }
 
+// On Load
 function dates_load_select() {
   let dropDown = document.getElementById('tournament_date');
   let length = dropDown.options.length;
@@ -76,22 +76,15 @@ function course_name_load_select() {
   createList(api, dropDown, title);
 }
 
-function read_tournament_name() {
-  const form = document.getElementById('form_add');
-  let data = {};
-  for (let i = 0; i < form.length - 3; i++) {
-    let id = form.elements[i].id;
-    let name = form.elements[i].value;
-    data[id] = name;
-  }
-  return data;
-}
-
+// Add
 async function form_add(ev) {
   ev.preventDefault();
   ev.stopPropagation();
 
   let data = read_add();
+  if (!data.tournament_name) {
+    return;
+  }
   let fails = await validate_add(data);
 
   if (fails.length > 0) {
@@ -99,11 +92,8 @@ async function form_add(ev) {
     return;
   }
 
-  let response = await upload_add(data);
-  alert(response);
-  document.getElementById('form_add').reset();
+  upload_add(data);
 }
-
 function read_add() {
   const form = document.getElementById('form_add');
   let data = {};
@@ -115,8 +105,8 @@ function read_add() {
   return data;
 }
 async function validate_add(data) {
-  let regex_name = new RegExp(/^(?=.{8})(.*[^0-9a-zA-Z].*)$/gm);
-  let regex_date = new RegExp(/^((0|1)\d{1})-((0|1|2)\d{1})-((19|20)\d{2})/gm);
+  let regex_name = /^[0-9A-Za-z ]{4,100}$/gm;
+  let regex_date = /^\d{2}[.\/-]\d{2}[.\/-]\d{4}$/gm;
   let fails = ``;
 
   if (!data.course_name) {
@@ -142,9 +132,7 @@ async function validate_add(data) {
     data.tournament_name = data.tournament_name.toNonAlpha(true).toProperCase();
   }
 
-  console.log('start database ask');
-  let res = await axios.post('/api/admin/tournament_get_name_date', { tournament_name: data.tournament_name, tournament_date: data.tournament_date }).catch((err) => alert(err));
-  console.log(res);
+  let res = await axios.post('/api/admin/tournament_get_name_date', { tournament_name: data.tournament_name, tournament_date: data.tournament_date }).catch((err) => console.log(err));
   if (res.data.details.length > 0) {
     fails = fails + `\nTournament:\n${data.tournament_name}\nOn\n${data.tournament_date}\nAlready Exists`;
     document.getElementById('tournament_name').value = ``;
@@ -154,17 +142,21 @@ async function validate_add(data) {
   return fails;
 }
 async function upload_add(data) {
-  try {
-    let res = await axios.post('/api/admin/tournament_add', data);
-    if (res.data.details[0].message) {
-      throw res.data.details[0].message;
-    } else {
-      console.log(res.data);
-      return `${res.data.details[0].tournament_name} On ${res.data.details[0].tournament_date}\nHas Been Added`;
-    }
-  } catch (err) {
-    return err;
-  }
+  axios
+    .post('/api/admin/tournament_add', data)
+    .then((res) => {
+      alert(`${res.data.details[0].tournament_name} Has Been Added`);
+      document.getElementById('form_add').reset();
+    })
+    .catch((err) => {
+      if (err.response) {
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        alert(`Request Error`);
+      } else {
+        alert(`Failure`);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

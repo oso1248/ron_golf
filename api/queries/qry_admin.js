@@ -124,7 +124,7 @@ async function course_delete_name(data) {
 // Holes
 async function hole_get_name(data) {
   let { rows } = await db.raw(`
-    SELECT cor.name, hol.id, hol.hole_number, hol.hole_par, hol.hole_distance, hol.hole_handicap
+    SELECT cor.id AS course_id, cor.name, hol.id AS hole_id, hol.hole_number, hol.hole_par, hol.hole_distance, hol.hole_handicap
     FROM course_main AS cor
     JOIN course_holes AS hol ON hol.course_id = cor.id
     WHERE cor.name = '${data.name}'
@@ -151,12 +151,12 @@ async function hole_update_name(data) {
 // Tournaments
 async function tournament_view() {
   let { rows } = await db.raw(`
-    SELECT tor.id, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY') AS tournament_date, CONCAT_WS('-',tor.name, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY')) AS tournament_name, cor.name AS course_name, COUNT(hol.id) AS holes, SUM(hol.hole_par) AS par, SUM(hol.hole_distance) AS distance, cor.rating_course
+    SELECT tor.id, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY') AS tournament_date, CONCAT_WS(',',tor.name, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY')) AS tournament_name, cor.name AS course_name, COUNT(hol.id) AS holes, SUM(hol.hole_par) AS par, SUM(hol.hole_distance) AS distance, cor.rating_course
     FROM course_holes AS hol
     JOIN course_main AS cor ON cor.id = hol.course_id
     JOIN tournament_main AS tor ON tor.course_id = cor.id
-    GROUP BY tor.id, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY'), CONCAT_WS('-',tor.name, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY')), cor.name, cor.rating_course
-    ORDER BY TO_CHAR( tor.tournament_date, 'MM-DD-YYYY') DESC
+    GROUP BY tor.id, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY'), CONCAT_WS(',',tor.name, TO_CHAR( tor.tournament_date, 'MM-DD-YYYY')), cor.name, cor.rating_course
+    ORDER BY TO_CHAR( tor.tournament_date, 'MM-DD-YYYY') ASC
     LIMIT 50;
   `);
   return rows;

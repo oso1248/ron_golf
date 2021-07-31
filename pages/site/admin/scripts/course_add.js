@@ -11,6 +11,7 @@ String.prototype.toNonAlpha = function (spaces) {
   }
 };
 
+// Add
 async function form_add() {
   let data = await read_add();
   let fails = await validate_add(data);
@@ -19,7 +20,6 @@ async function form_add() {
 
     return;
   }
-
   upload_add(data);
 }
 function read_add() {
@@ -38,7 +38,6 @@ async function validate_add(data) {
   let regex_email = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
   let regex_rating = /^\d{0,3}(\.\d{1,2})?$/;
   let regex_hole_count = /9|18|27/;
-  // let regex_address = new RegExp(/^(\d+) ?([A-Za-z](?= ))? (.*?) ([^ ]+?) ?((?<= )APT)? ?((?<= )\d*)?$/gm);
   let regex_address = new RegExp(/^[A-Za-z0-9 ]{1,120}$/gm);
 
   let fails = ``;
@@ -64,18 +63,16 @@ async function validate_add(data) {
     data.phone = data.phone.replace(regex_phone, `($1) $2-$3`);
   }
 
-  if (!regex_email.test(data.email)) {
-    fails = fails + `\nValid Email Required\n`;
-    document.getElementById('email').value = ``;
-    data.email = null;
-  } else {
-    data.email = data.email.toLowerCase();
-    let res = await axios.post('/api/admin/course_get_email', { email: data.email }).catch((err) => alert(err));
-    if (res.data.details.length > 0) {
-      fails = fails + `\nEmail Taken\n`;
+  if (data.email) {
+    if (!regex_email.test(data.email)) {
+      fails = fails + `\nEmail Not In Valid Form\n`;
       document.getElementById('email').value = ``;
       data.email = null;
+    } else {
+      data.email = data.email.toLowerCase();
     }
+  } else {
+    data.email = ``;
   }
 
   if (!regex_rating.test(data.rating_course) || data.rating_course === ``) {
@@ -106,17 +103,24 @@ async function validate_add(data) {
   return fails;
 }
 async function upload_add(data) {
-  try {
-    let res = await axios.post('/api/admin/course_add', data);
-    if (res.data.details[0].message) {
-      throw res.data.details[0].message;
-    } else {
+  axios
+    .post('/api/admin/course_add', data)
+    .then((res) => {
       alert(`${res.data.details[0].name} Has Been Added`);
       document.getElementById('form_add').reset();
-    }
-  } catch (err) {
-    alert(err);
-  }
+    })
+    .catch((err) => {
+      if (err.response) {
+        console.log(err.response);
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        console.log(err.request);
+        alert(`Request Error`);
+      } else {
+        console.log(err);
+        alert(`Failure`);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

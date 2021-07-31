@@ -22,6 +22,7 @@ function createList(api, parent, title) {
     });
 }
 
+// On Load
 function course_name_load_select() {
   let dropDown = document.getElementById('name');
   let length = dropDown.options.length;
@@ -34,22 +35,30 @@ function course_name_load_select() {
   createList(api, dropDown, title);
 }
 
+// On Select
 async function course_name_selected() {
-  try {
-    let data = read_update_name();
-    let res = await axios.post('/api/admin/course_get_name', { name: data.name });
-
-    if (res.data.details.length === 0) {
-      alert(`Invalid User`);
-    } else if (res.data.details.length > 0) {
+  let data = read_update_name();
+  axios
+    .post('/api/admin/course_get_name', { name: data.name })
+    .then((res) => {
       document.getElementById('phone').value = res.data.details[0].phone;
       document.getElementById('email').value = res.data.details[0].email;
       document.getElementById('rating_course').value = res.data.details[0].rating_course;
       document.getElementById('rating_slope').value = res.data.details[0].rating_slope;
-    }
-  } catch (err) {
-    alert(err);
-  }
+    })
+    .catch((err) => {
+      document.getElementById('form_update').reset();
+      if (err.response) {
+        console.log(err.response);
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        console.log(err.request);
+        alert(`Request Error`);
+      } else {
+        console.log(err);
+        alert(`Failure`);
+      }
+    });
 }
 function read_update_name() {
   const form = document.getElementById('form_update');
@@ -61,6 +70,8 @@ function read_update_name() {
   }
   return data;
 }
+
+// Update
 async function form_update(ev) {
   ev.preventDefault();
   ev.stopPropagation();
@@ -74,9 +85,7 @@ async function form_update(ev) {
     return;
   }
 
-  let response = await upload_update(data);
-  alert(response);
-  document.getElementById('form_update').reset();
+  upload_update(data);
 }
 function read_update() {
   const form = document.getElementById('form_update');
@@ -88,19 +97,6 @@ function read_update() {
   }
   return data;
 }
-async function upload_update(data) {
-  try {
-    let res = await axios.post('/api/admin/course_update_name', data);
-    if (res.data.details[0].message) {
-      throw res.data.details[0].message;
-    } else {
-      return `${res.data.details[0].name} Has Been Updated`;
-    }
-  } catch (err) {
-    return err;
-  }
-}
-
 async function validate_update(data) {
   let regex_phone = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
   let regex_email = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
@@ -115,20 +111,16 @@ async function validate_update(data) {
     data.phone = data.phone.replace(regex_phone, `($1) $2-$3`);
   }
 
-  if (!regex_email.test(data.email)) {
-    fails = fails + `\nValid Email Required\n`;
-    document.getElementById('email').value = ``;
-    data.email = null;
-  } else {
-    data.email = data.email.toLowerCase();
-    let res = await axios.post('/api/admin/course_get_email', { email: data.email }).catch((err) => alert(err));
-    if (res.data.details.length > 0) {
-      if (data.name != res.data.details[0].name) {
-        fails = fails + `\nEmail Taken\n`;
-        document.getElementById('email').value = ``;
-        data.email = null;
-      }
+  if (data.email) {
+    if (!regex_email.test(data.email)) {
+      fails = fails + `\nEmail Not In Valid Form\n`;
+      document.getElementById('email').value = ``;
+      data.email = null;
+    } else {
+      data.email = data.email.toLowerCase();
     }
+  } else {
+    data.email = ``;
   }
 
   if (!regex_rating.test(data.rating_course) || data.rating_course === ``) {
@@ -144,6 +136,24 @@ async function validate_update(data) {
   }
 
   return fails;
+}
+async function upload_update(data) {
+  axios
+    .post('/api/admin/course_update_name', data)
+    .then((res) => {
+      alert(`${res.data.details[0].name} Has Been Updated`);
+      document.getElementById('form_update').reset();
+    })
+    .catch((err) => {
+      if (err.response) {
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        console.log(err.request);
+        alert(`Request Failure`);
+      } else {
+        alert(`Failure`);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

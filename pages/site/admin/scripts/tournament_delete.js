@@ -1,3 +1,4 @@
+// On Load
 let tbl_view;
 function tournament_view() {
   axios
@@ -22,9 +23,18 @@ function tournament_view() {
         ],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      if (err.response) {
+        alert(err.response);
+      } else if (err.request) {
+        alert(err.request);
+      } else {
+        alert(err);
+      }
+    });
 }
 
+// Delete
 async function tournament_delete(ev) {
   ev.preventDefault();
   ev.stopPropagation();
@@ -42,23 +52,25 @@ async function tournament_delete(ev) {
     alert(`${selected_data[0].tournament_name} Not Deleted`);
     return;
   } else if (delete_tournament) {
-    let response = await upload_delete(selected_data[0]);
-    tournament_view();
-    alert(response);
+    upload_delete(selected_data[0]);
   }
 }
-
 async function upload_delete(data) {
-  try {
-    let res = await axios.post('/api/admin/tournament_delete_name', { id: data.id });
-    if (res.data.details[0].message) {
-      throw res.data.details[0].message;
-    } else {
-      return `${res.data.details[0].tournament_name} Has Been Deleted`;
-    }
-  } catch (err) {
-    return err;
-  }
+  axios
+    .post('/api/admin/tournament_delete_name', { id: data.id })
+    .then((res) => {
+      tournament_view();
+      alert(`${res.data.details[0].tournament_name} Has Been Deleted`);
+    })
+    .catch((err) => {
+      if (err.response) {
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        alert(`Request Error`);
+      } else {
+        alert(`Failure`);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

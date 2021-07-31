@@ -3,7 +3,7 @@ const Joi = require('joi');
 
 // Users
 const user_view = Joi.object({
-  view: Joi.string().valid(true),
+  view: Joi.boolean().valid(true).required(),
 });
 const user_add = Joi.object({
   username: Joi.string()
@@ -64,10 +64,7 @@ const course_add = Joi.object({
   phone: Joi.string()
     .pattern(new RegExp(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/))
     .required(),
-  email: Joi.string()
-    .lowercase()
-    .pattern(new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/))
-    .required(),
+  email: Joi.string().allow(null).required().lowercase(),
   rating_course: Joi.string()
     .pattern(new RegExp(/^\d{0,3}(\.\d{1,2})?$/))
     .required(),
@@ -95,13 +92,8 @@ const course_update_name = Joi.object({
   name: Joi.string()
     .pattern(new RegExp(/^[0-9A-Za-z ]{1,100}$/))
     .required(),
-  phone: Joi.string()
-    .pattern(new RegExp(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/))
-    .required(),
-  email: Joi.string()
-    .lowercase()
-    .pattern(new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/))
-    .required(),
+  phone: Joi.string().pattern(new RegExp(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/)),
+  email: Joi.string().allow(null).required().lowercase(),
   rating_course: Joi.string()
     .pattern(new RegExp(/^\d{0,3}(\.\d{1,2})?$/))
     .required(),
@@ -128,13 +120,13 @@ const tournament_view = Joi.object({
 });
 const tournament_add = Joi.object({
   tournament_name: Joi.string()
-    .pattern(new RegExp(/^(?=.{8})(.*[^0-9a-zA-Z].*)$/))
+    .pattern(new RegExp(/^[0-9A-Za-z ]{4,100}$/))
     .required(),
   course_name: Joi.string()
     .pattern(new RegExp(/^[0-9A-Za-z ]{1,100}$/))
     .required(),
   tournament_date: Joi.string()
-    .pattern(new RegExp(/^((0|1)\d{1})-((0|1|2)\d{1})-((19|20)\d{2})/))
+    .pattern(new RegExp(/^\d{2}[.\/-]\d{2}[.\/-]\d{4}$/))
     .required(),
 });
 const tournament_get_name_date = Joi.object({

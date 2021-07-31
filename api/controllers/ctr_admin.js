@@ -1,253 +1,263 @@
 const db = require('../queries/qry_admin');
-const bcrypt = require('bcryptjs');
 const validate = require('../validations/val_admin');
+const ApiError = require('../error/ApiError');
+const func = require('../functions/fcn_admin');
 
 // Users
 exports.user_view = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.user_view.validateAsync(req.body);
-    let response = await db.user_view();
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    resStatus = 500;
-    res.status(resStatus).json(err);
-  }
+  validate.user_view
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.user_view())
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.user_add = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.user_add.validateAsync(req.body);
-    result.password = bcrypt.hashSync(result.password, 6);
-    let response = await db.user_add(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.user_add
+    .validateAsync(req.body, { abortEarly: false })
+    .then(async (result) => func.hashPassword(result, 6))
+    .then((user) => db.user_add(user))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.user_get_username = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.user_get_username.validateAsync(req.body);
-    let response = await db.user_get_username(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.user_get_username
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.user_get_username(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.user_get_email = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.user_get_email.validateAsync(req.body);
-    let response = await db.user_get_email(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.user_get_email
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.user_get_email(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.user_get_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.user_get_name.validateAsync(req.body);
-    let response = await db.user_get_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.user_get_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.user_get_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.user_update_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.user_update_name.validateAsync(req.body);
-    let response = await db.user_update_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.user_update_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.user_update_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.user_delete_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.user_delete_name.validateAsync(req.body);
-    let response = await db.user_delete_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.user_delete_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.user_delete_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // Courses
 exports.course_view = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.course_view.validateAsync(req.body);
-    let response = await db.course_view();
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    resStatus = 500;
-    res.status(resStatus).json(err);
-  }
+  validate.course_view
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.course_view(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.course_add = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.course_add.validateAsync(req.body);
-    let response = await db.course_add(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.course_add
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.course_add(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.course_get_email = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.course_get_email.validateAsync(req.body);
-    let response = await db.course_get_email(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.course_get_email
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.course_get_email(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.course_get_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.course_get_name.validateAsync(req.body);
-    let response = await db.course_get_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.course_get_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.course_get_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.course_update_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.course_update_name.validateAsync(req.body);
-    let response = await db.course_update_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.course_update_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.course_update_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.course_delete_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.course_delete_name.validateAsync(req.body);
-    let response = await db.course_delete_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.course_delete_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.course_delete_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // Holes
 exports.hole_get_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.hole_get_name.validateAsync(req.body);
-    let response = await db.hole_get_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    resStatus = 500;
-    res.status(resStatus).json(err);
-  }
+  validate.hole_get_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.hole_get_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.hole_update_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.hole_update_name.validateAsync(req.body);
-    let response = await db.hole_update_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.hole_update_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.hole_update_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // Tournaments
 exports.tournament_view = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.tournament_view.validateAsync(req.body);
-    let response = await db.tournament_view();
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    resStatus = 500;
-    res.status(resStatus).json(err);
-  }
+  validate.tournament_view
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.tournament_view(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.tournament_add = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.tournament_add.validateAsync(req.body);
-    let response = await db.tournament_add(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.tournament_add
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.tournament_add(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        console.log(err);
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.tournament_get_name_date = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.tournament_get_name_date.validateAsync(req.body);
-
-    let response = await db.tournament_get_name_date(result);
-
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.tournament_get_name_date
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.tournament_get_name_date(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        console.log(err);
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };
 exports.tournament_delete_name = async function (req, res, next) {
-  let resStatus = 200;
-  try {
-    let result = await validate.tournament_delete_name.validateAsync(req.body);
-    let response = await db.tournament_delete_name(result);
-    res.status(resStatus).json({ details: response });
-  } catch (err) {
-    if (!err.details[0].message) {
-      resStatus = 400;
-    }
-    res.status(resStatus).json(err);
-  }
+  validate.tournament_delete_name
+    .validateAsync(req.body, { abortEarly: false })
+    .then((result) => db.tournament_delete_name(result))
+    .then((response) => res.status(200).json({ details: response }))
+    .catch((err) => {
+      if (err.name === `ValidationError`) {
+        console.log(err);
+        next(ApiError.badRequest(err));
+      } else {
+        next(err);
+      }
+    });
 };

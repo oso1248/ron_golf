@@ -22,6 +22,7 @@ function createList(api, parent, title) {
     });
 }
 
+// On Load
 function course_name_load_select() {
   let dropDown = document.getElementById('name');
   let length = dropDown.options.length;
@@ -33,21 +34,47 @@ function course_name_load_select() {
   let title = 'name';
   createList(api, dropDown, title);
 }
+
+// On Select
+let tbl_view;
 async function course_name_selected(ev) {
   ev.preventDefault();
   ev.stopPropagation();
-  try {
-    let data = read_view();
-    let res = await axios.post('/api/admin/hole_get_name', data);
 
-    if (res.data.details.length === 0) {
-      alert(`Invalid Course`);
-    } else if (res.data.details.length > 0) {
-      load_table(res.data.details);
-    }
-  } catch (err) {
-    alert(err);
+  let data = read_view();
+  if (!data.name) {
+    return;
   }
+  document.getElementById('hole_get_div').style.display = 'block';
+  axios
+    .post('/api/admin/hole_get_name', data)
+    .then((res) => {
+      let tableData = res.data.details;
+      tbl_view = new Tabulator('#user_view_table', {
+        printHeader: '<h1>Course<h1>',
+        resizableColumns: false,
+        selectable: false,
+        height: '100%',
+        layout: 'fitDataFill',
+        data: tableData,
+        columns: [
+          { title: 'Course', field: 'name', hozAlign: 'center', frozen: true },
+          { title: 'Hole', field: 'hole_number', hozAlign: 'center' },
+          { title: 'Par', field: 'hole_par', hozAlign: 'center' },
+          { title: 'DIstance', field: 'hole_distance', hozAlign: 'center' },
+          { title: 'Handicap', field: 'hole_handicap', hozAlign: 'center' },
+        ],
+      });
+    })
+    .catch((err) => {
+      if (err.response) {
+        console.log(err.response);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.log(err);
+      }
+    });
 }
 function read_view() {
   const form = document.getElementById('form_view');
@@ -58,25 +85,6 @@ function read_view() {
     data[id] = name;
   }
   return data;
-}
-let tbl_view;
-function load_table(table_data) {
-  document.getElementById('hole_get_div').style.display = 'block';
-  tbl_view = new Tabulator('#user_view_table', {
-    printHeader: '<h1>Course<h1>',
-    resizableColumns: false,
-    selectable: false,
-    height: '100%',
-    layout: 'fitDataFill',
-    data: table_data,
-    columns: [
-      { title: 'Course', field: 'name', hozAlign: 'center', frozen: true },
-      { title: 'Hole', field: 'hole_number', hozAlign: 'center' },
-      { title: 'Par', field: 'hole_par', hozAlign: 'center' },
-      { title: 'DIstance', field: 'hole_distance', hozAlign: 'center' },
-      { title: 'Handicap', field: 'hole_handicap', hozAlign: 'center' },
-    ],
-  });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

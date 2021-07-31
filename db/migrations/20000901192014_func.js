@@ -53,7 +53,7 @@ exports.up = async function (knex) {
     AS
     $$
     BEGIN
-      DELETE FROM inv_mat_weekly WHERE created_at < NOW() - INTERVAL '1095 days';
+      DELETE FROM round WHERE created_at < NOW() - INTERVAL '1095 days';
       RETURN NULL;
     END;
     $$;
@@ -65,7 +65,7 @@ exports.up = async function (knex) {
     AS
     $$
     BEGIN
-      DELETE FROM inv_mat_weekly WHERE created_at < NOW() - INTERVAL '1095 days';
+      DELETE FROM tournament_main WHERE created_at < NOW() - INTERVAL '1095 days';
       RETURN NULL;
     END;
     $$;

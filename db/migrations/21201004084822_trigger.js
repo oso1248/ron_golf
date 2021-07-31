@@ -34,7 +34,7 @@ exports.up = async function (knex) {
   await knex.raw(`
     CREATE TRIGGER delete_old_rows_rounds_trigger
     AFTER INSERT
-    ON rounds
+    ON round
     FOR EACH ROW
     EXECUTE PROCEDURE delete_old_rows_rounds();
   `);

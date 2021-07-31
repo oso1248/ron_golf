@@ -22,6 +22,7 @@ function createList(api, parent, title) {
     });
 }
 
+// On Load
 function user_name_load_select() {
   let dropDown = document.getElementById('name');
   let length = dropDown.options.length;
@@ -34,22 +35,30 @@ function user_name_load_select() {
   createList(api, dropDown, title);
 }
 
+// On Select
 async function user_name_selected() {
-  try {
-    let data = read_update_name();
-    let res = await axios.post('/api/admin/user_get_name', { name: data.name });
-
-    if (res.data.details.length === 0) {
-      alert(`Invalid User`);
-    } else if (res.data.details.length > 0) {
+  let data = read_update_name();
+  axios
+    .post('/api/admin/user_get_name', { name: data.name })
+    .then((res) => {
       document.getElementById('phone').value = res.data.details[0].phone;
       document.getElementById('email').value = res.data.details[0].email;
       document.getElementById('handicap').value = res.data.details[0].handicap;
       document.getElementById(res.data.details[0].permissions).selected = `selected`;
-    }
-  } catch (err) {
-    alert(err);
-  }
+    })
+    .catch((err) => {
+      document.getElementById('form_update').reset();
+      if (err.response) {
+        console.log(err.response);
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        console.log(err.request);
+        alert(`Request Error`);
+      } else {
+        console.log(err);
+        alert(`Failure`);
+      }
+    });
 }
 function read_update_name() {
   const form = document.getElementById('form_update');
@@ -61,6 +70,8 @@ function read_update_name() {
   }
   return data;
 }
+
+// Update
 async function form_update(ev) {
   ev.preventDefault();
   ev.stopPropagation();
@@ -73,10 +84,7 @@ async function form_update(ev) {
     alert(`Problems:\n${fails}`);
     return;
   }
-
-  let response = await upload_update(data);
-  alert(response);
-  document.getElementById('form_update').reset();
+  upload_update(data);
 }
 function read_update() {
   const form = document.getElementById('form_update');
@@ -88,19 +96,6 @@ function read_update() {
   }
   return data;
 }
-async function upload_update(data) {
-  try {
-    let res = await axios.post('/api/admin/user_update_name', data);
-    if (res.data.details[0].message) {
-      throw res.data.details[0].message;
-    } else {
-      return `${res.data.details[0].name} Has Been Updated`;
-    }
-  } catch (err) {
-    return err;
-  }
-}
-
 async function validate_update(data) {
   let regex_email = new RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/gm);
   let regex_phone = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -143,6 +138,35 @@ async function validate_update(data) {
   }
 
   return fails;
+}
+async function upload_update(data) {
+  axios
+    .post('/api/admin/user_update_name', data)
+    .then((res) => {
+      alert(`${res.data.details[0].name} Has Been Updated`);
+      document.getElementById('form_update').reset();
+    })
+    .catch((err) => {
+      if (err.response) {
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        console.log(err.request);
+        alert(`Request Failure`);
+      } else {
+        alert(`Failure`);
+      }
+    });
+
+  // try {
+  //   let res = await axios.post('/api/admin/user_update_name', data);
+  //   if (res.data.details[0].message) {
+  //     throw res.data.details[0].message;
+  //   } else {
+  //     return `${res.data.details[0].name} Has Been Updated`;
+  //   }
+  // } catch (err) {
+  //   return err;
+  // }
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

@@ -1,0 +1,8 @@
+.headers {
+  margin-top: 2rem;
+}
+
+.tabulator-print-header,
+tabulator-print-footer {
+  text-align: left;
+}

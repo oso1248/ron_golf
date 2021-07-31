@@ -22,6 +22,7 @@ function createList(api, parent, title) {
     });
 }
 
+// On Load
 function user_name_load_select() {
   let dropDown = document.getElementById('name');
   let length = dropDown.options.length;
@@ -33,27 +34,41 @@ function user_name_load_select() {
   let title = 'name';
   createList(api, dropDown, title);
 }
-async function user_name_selected() {
-  try {
-    let data = read_delete();
-    let res = await axios.post('/api/admin/user_get_name', { name: data.name });
 
-    if (res.data.details.length === 0) {
-      alert(`Invalid User`);
-    } else if (res.data.details.length > 0) {
+// On Select
+async function user_name_selected() {
+  let data = read_delete();
+  axios
+    .post('/api/admin/user_get_name', { name: data.name })
+    .then((res) => {
       document.getElementById('phone').value = res.data.details[0].phone;
       document.getElementById('email').value = res.data.details[0].email;
-    }
-  } catch (err) {
-    alert(err);
-  }
+    })
+    .catch((err) => {
+      document.getElementById('form_delete').reset();
+      if (err.response) {
+        console.log(err.response);
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        console.log(err.request);
+        alert(`Request Error`);
+      } else {
+        console.log(err);
+        alert(`Failure`);
+      }
+    });
 }
 
+// Delete
 async function form_delete(ev) {
   ev.preventDefault();
   ev.stopPropagation();
 
   let data = read_delete();
+  if (!data.user_name) {
+    return;
+  }
+
   let fails = validate_delete(data);
   if (fails.length > 0) {
     alert(`Problems:\n${fails}`);
@@ -67,10 +82,7 @@ async function form_delete(ev) {
     document.getElementById('form_delete').reset();
     return;
   } else if (delete_user) {
-    let response = await upload_delete(data);
-    alert(response);
-    document.getElementById('form_delete').reset();
-    user_name_load_select();
+    upload_delete(data);
   }
 }
 function read_delete() {
@@ -91,16 +103,22 @@ function validate_delete(data) {
   return fails;
 }
 async function upload_delete(data) {
-  try {
-    let res = await axios.post('/api/admin/user_delete_name', data);
-    if (res.data.details[0].message) {
-      throw res.data.details[0].message;
-    } else {
-      return `${res.data.details[0].name} Has Been Deleted`;
-    }
-  } catch (err) {
-    return err;
-  }
+  axios
+    .post('/api/admin/user_delete_name', data)
+    .then((res) => {
+      document.getElementById('form_delete').reset();
+      user_name_load_select();
+      alert(`${res.data.details[0].name} Has Been Deleted`);
+    })
+    .catch((err) => {
+      if (err.response) {
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        alert(`Request Error`);
+      } else {
+        alert(`Failure`);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

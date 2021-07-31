@@ -25,7 +25,15 @@ function course_view() {
         ],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      if (err.response) {
+        console.log(err.response);
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.log(err);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {

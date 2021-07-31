@@ -11,9 +11,9 @@ String.prototype.toNonAlpha = function (spaces) {
   }
 };
 
+// Add
 async function form_add() {
   let data = await read_add();
-  console.log(data);
   let fails = await validate_add(data);
   if (fails.length > 0) {
     alert(`Problems:\n ${fails}`);
@@ -113,17 +113,21 @@ async function validate_add(data) {
   return fails;
 }
 async function upload_add(data) {
-  try {
-    let res = await axios.post('/api/admin/user_add', data);
-    if (res.data.details[0].message) {
-      throw res.data.details[0].message;
-    } else {
-      alert(`${res.data.details[0].name} Has Been Added`);
+  axios
+    .post('/api/admin/user_add', data)
+    .then((res) => {
       document.getElementById('form_add').reset();
-    }
-  } catch (err) {
-    alert(err);
-  }
+      alert(`${res.data.details[0].name} Has Been Added`);
+    })
+    .catch((err) => {
+      if (err.response) {
+        alert(err.response.data.details[0].message);
+      } else if (err.request) {
+        alert(`Request Error`);
+      } else {
+        alert(`Failure`);
+      }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', (ev) => {
@@ -133,7 +137,6 @@ document.addEventListener('DOMContentLoaded', (ev) => {
   document.getElementById('btnSubmit').addEventListener('click', (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
-
     form_add();
   });
 
