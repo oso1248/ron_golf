@@ -42,6 +42,7 @@ function tournament_name_load_select() {
   for (let i = length - 1; i >= 0; i--) {
     dropDown.options[i] = null;
   }
+
   dropDown.innerHTML = `<option value="" disabled selected hidden>Select Tournament</option>`;
   let api = { str: '/api/play/tournament_list', data: { view: true } };
   let title = 'tournament_name';
@@ -152,6 +153,7 @@ document.addEventListener('DOMContentLoaded', (ev) => {
 
   document.getElementById('btnClear').addEventListener('click', (ev) => {
     ev.preventDefault();
+
     document.getElementById('form_add').reset();
   });
   document.getElementById('tournament_name').addEventListener('change', tournament_name_change_select);

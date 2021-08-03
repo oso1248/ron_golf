@@ -22,6 +22,7 @@ function createList(api, parent, title) {
     });
 }
 
+// On Load
 function course_name_load_select() {
   let dropDown = document.getElementById('name');
   let length = dropDown.options.length;
@@ -33,12 +34,17 @@ function course_name_load_select() {
   let title = 'name';
   createList(api, dropDown, title);
 }
+
+// On Select
 let tbl_view;
 async function course_name_selected(ev) {
   ev.preventDefault();
   ev.stopPropagation();
 
   let data = read_view();
+  if (!data.name) {
+    return;
+  }
   document.getElementById('hole_get_div').style.display = 'block';
   axios
     .post('/api/admin/hole_get_name', data)

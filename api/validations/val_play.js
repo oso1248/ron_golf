@@ -1,7 +1,7 @@
 const { date } = require('joi');
 const Joi = require('joi');
 
-// Courses
+// Rounds
 const round_add = Joi.object({
   user_id: Joi.number().integer().required(),
   course_name: Joi.string()
@@ -37,9 +37,32 @@ const tournament_get_name = Joi.object({
     .required(),
 });
 
+// Score
+const round_list = Joi.object({
+  user_id: Joi.number().integer().required(),
+});
+const round_get_id = Joi.object({
+  user_id: Joi.number().integer().required(),
+  round_id: Joi.number().integer().required(),
+});
+const tournament_get_id = Joi.object({
+  user_id: Joi.number().integer().required(),
+  tournament_id: Joi.number().integer().required(),
+});
+const score_upload = Joi.object({
+  values: Joi.string().required(),
+});
+
 module.exports = {
+  // Round
   round_add,
+  // Tournament
   tournament_list,
   tournament_sign_up,
   tournament_get_name,
+  // Score
+  round_list,
+  round_get_id,
+  tournament_get_id,
+  score_upload,
 };

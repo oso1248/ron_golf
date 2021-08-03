@@ -36,7 +36,6 @@ function createList(api, parent, title) {
       console.error(err);
     });
 }
-
 function createListData(data, parent, title) {
   data.forEach((elem) => {
     let listItem = elem[title];
@@ -47,6 +46,7 @@ function createListData(data, parent, title) {
   });
 }
 
+// On Load
 function dates_load_select() {
   let dropDown = document.getElementById('round_date');
   let length = dropDown.options.length;
@@ -76,17 +76,7 @@ function course_name_load_select() {
   createList(api, dropDown, title);
 }
 
-function read_tournament_name() {
-  const form = document.getElementById('form_add');
-  let data = {};
-  for (let i = 0; i < form.length - 3; i++) {
-    let id = form.elements[i].id;
-    let name = form.elements[i].value;
-    data[id] = name;
-  }
-  return data;
-}
-
+// Add
 async function form_add(ev) {
   ev.preventDefault();
   ev.stopPropagation();
@@ -103,7 +93,6 @@ async function form_add(ev) {
   alert(response);
   document.getElementById('form_add').reset();
 }
-
 function read_add() {
   const form = document.getElementById('form_add');
   let data = {};

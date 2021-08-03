@@ -1,5 +1,6 @@
 const db = require('../queries/qry_courses');
 const validate = require('../validations/val_courses');
+const ApiError = require('../error/ApiError');
 
 // Courses
 exports.course_view = async function (req, res, next) {

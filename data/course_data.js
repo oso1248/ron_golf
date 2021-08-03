@@ -1,7 +1,7 @@
 const course_main = [
   { name: 'Airport Golf Club Back', address: '4801 Central Ave Cheyenne Wy 82009', phone: '(307) 637-6418', email: '', rating_course: 35.6, rating_slope: 126.0, hole_count: 9 },
   { name: 'Airport Golf Club Front', address: '4801 Central Ave Cheyenne Wy 82009', phone: '(307) 637-6418', email: '', rating_course: 33.1, rating_slope: 122.0, hole_count: 9 },
-  { name: 'Prairie View Golf Club', address: '3601 Windmill Rd Cheyenne Wy 82009', phone: '(307) 637-6420', email: '', rating_course: 35.0, rating_slope: 117.0, hole_count: 9 },
+  { name: 'Airport Golf Club Front', address: '4801 Central Ave Cheyenne Wy 82009', phone: '(307) 637-6418', email: '', rating_course: 33.1, rating_slope: 122.0, hole_count: 9 },
 ];
 
 const holes = [
