@@ -133,6 +133,7 @@ async function validate_add(data) {
   }
 
   let res = await axios.post('/api/admin/tournament_get_name_date', { tournament_name: data.tournament_name, tournament_date: data.tournament_date }).catch((err) => console.log(err));
+  console.log(res.data.details);
   if (res.data.details.length > 0) {
     fails = fails + `\nTournament:\n${data.tournament_name}\nOn\n${data.tournament_date}\nAlready Exists`;
     document.getElementById('tournament_name').value = ``;

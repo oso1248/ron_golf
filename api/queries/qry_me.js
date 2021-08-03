@@ -4,24 +4,26 @@ const db = require('../dbConfig');
 async function playing_list(data) {
   let { rows } = await db.raw(`
     SELECT * FROM
-      (SELECT TO_CHAR( ron.round_date, 'MM-DD-YYYY') AS round_date, CAST(COALESCE(null, 'private round') AS VARCHAR) AS round_name,  cor.name AS course_name, cor.hole_count, SUM(hol.hole_par) AS par, SUM(hol.hole_distance) AS distance, cor.rating_course, use.handicap AS user_handicap, CAST((use.handicap *(cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par)) AS INT) AS course_handicap
-      FROM course_main AS cor
-      JOIN course_holes AS hol ON hol.course_id = cor.id
-      JOIN round_main AS ron ON ron.course_id = cor.id
-      LEFT JOIN round AS ply ON ply.player_id = ron.player_id AND ply.round_id = ron.id
-      JOIN users AS use ON use.id = ron.player_id
-      WHERE ron.player_id = ${data.user_id} AND ply.round_id IS NULL
-      GROUP BY ron.round_date, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course
-    UNION
-      SELECT TO_CHAR( main.tournament_date, 'MM-DD-YYYY') AS round_date, main.name AS round_name, cor.name AS course_name, cor.hole_count, SUM(hol.hole_par) AS par, SUM(hol.hole_distance) AS distance, cor.rating_course, use.handicap AS user_handicap, CAST((use.handicap * (cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par)) AS INT) AS course_handicap
+      (SELECT TO_CHAR(main.tournament_date, 'mm-dd-yyyy') AS round_date, main.name AS round_name, cor.name AS course_name, cor.hole_count, SUM(hol.hole_par) AS course_par, SUM(hol.hole_distance) AS course_distance, cor.rating_course, SUM(hol.hole_par) AS hole_par, use.handicap AS user_handicap,
+            FLOOR((use.handicap * (cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par))) AS course_handicap
       FROM course_main AS cor
       JOIN course_holes AS hol ON hol.course_id = cor.id
       JOIN tournament_main AS main ON main.course_id = cor.id
       JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
-      LEFT JOIN round AS ron ON ron.tournament_id = main.id
       JOIN users AS use ON use.id = lin.user_id
-      WHERE lin.user_id = ${data.user_id} AND ron.tournament_id IS NULL
-      GROUP BY main.id, main.tournament_date, main.name, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course) AS z
+      LEFT JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id
+      WHERE use.id = ${data.user_id} AND ron.round_id IS NULL
+      GROUP BY main.tournament_date, main.name, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course, use.handicap
+    UNION ALL
+      SELECT TO_CHAR(main.round_date, 'mm-dd-yyyy') AS round_date, CAST(COALESCE(null, 'private round') AS VARCHAR) AS round_name, cor.name AS course_name, cor.hole_count, SUM(hol.hole_par) AS course_par, SUM(hol.hole_distance) AS course_distance, cor.rating_course, SUM(hol.hole_par) AS hole_par, use.handicap AS user_handicap,
+            FLOOR((use.handicap * (cor.rating_slope / 113)) + cor.rating_course - SUM(hol.hole_par)) AS course_handicap
+      FROM course_main AS cor
+      JOIN course_holes AS hol ON hol.course_id = cor.id
+      JOIN round_main AS main ON main.course_id = cor.id
+      JOIN users AS use ON use.id = main.player_id
+      LEFT JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
+      WHERE use.id = ${data.user_id} AND ron.round_id IS NULL
+      GROUP BY main.round_date, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course, use.handicap) AS z
     ORDER BY z.round_date DESC, z.round_name DESC
   `);
   return rows;
@@ -53,7 +55,7 @@ async function played_list(data) {
       JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
       WHERE ron.player_id = ${data.user_id}
       GROUP BY main.round_date, cor.name, cor.hole_count, cor.rating_course, ron.user_handicap, cor.rating_slope, cor.rating_course) AS z
-    ORDER BY z.round_date ASC, z.round_name DESC
+    ORDER BY z.round_date DESC, z.round_name DESC
     LIMIT 100
   `);
   return rows;
@@ -142,25 +144,3 @@ module.exports = {
   details_round_id,
   details_tournament_id,
 };
-
-// SELECT * FROM
-//       (SELECT TO_CHAR(main.tournament_date, 'MM-DD-YYYY') AS round_date, main.name AS round_name, cor.name AS course_name, cor.hole_count, SUM(hol.hole_par) AS course_par, SUM(hol.hole_distance) AS course_distance, cor.rating_course, SUM(ron.strokes) AS strokes_up, CAST((ron.handicap * (cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par)) AS INT) AS course_handicap, (SUM(ron.strokes) - (CAST((use.handicap * (cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par)) AS INT))) AS strokes_adjusted
-//       FROM course_main AS cor
-//       JOIN course_holes AS hol ON hol.course_id = cor.id
-//       JOIN tournament_main AS main ON main.course_id = cor.id
-//       JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
-//       JOIN users AS use ON use.id = lin.user_id
-//       JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id
-//       WHERE lin.user_id = ${data.user_id}
-//       GROUP BY main.tournament_date, main.name, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course
-//     UNION ALL
-//       SELECT TO_CHAR(main.round_date, 'MM-DD-YYYY') AS round_date, CAST(COALESCE(null, 'private round') AS VARCHAR) AS round_name, cor.name AS course_name, cor.hole_count, SUM(hol.hole_par) AS course_par, SUM(hol.hole_distance) AS course_distance, cor.rating_course, SUM(ron.strokes) AS strokes_up, CAST((ron.handicap * (cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par)) AS INT) AS course_handicap, (SUM(ron.strokes) - (CAST((use.handicap * (cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par)) AS INT))) AS strokes_adjusted
-//       FROM course_main AS cor
-//       JOIN course_holes AS hol ON hol.course_id = cor.id
-//       JOIN round_main AS main ON main.course_id = cor.id
-//       JOIN users AS use ON use.id = main.player_id
-//       JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
-//       WHERE ron.player_id = ${data.user_id}
-//       GROUP BY main.round_date, cor.name, cor.hole_count, use.handicap, cor.rating_slope, cor.rating_course, cor.rating_course) as z
-//     ORDER BY z.round_date DESC, z.round_name DESC
-//     LIMIT 50
