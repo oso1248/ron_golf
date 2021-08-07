@@ -76,8 +76,8 @@ async function course_view() {
 async function course_add(data) {
   let { rows } = await db.raw(`
     INSERT
-    INTO course_main (name, address, phone, email, rating_course, rating_slope, hole_count)
-    VALUES ('${data.name}', '${data.address}', '${data.phone}', '${data.email}', ${data.rating_course}, ${data.rating_slope}, ${data.hole_count})
+    INTO course_main (name, address, phone, email, rating_course, rating_slope, hole_count, latitude, longitude)
+    VALUES ('${data.name}', '${data.address}', '${data.phone}', '${data.email}', ${data.rating_course}, ${data.rating_slope}, ${data.hole_count}, ${data.latitude}, ${data.longitude})
     RETURNING name
   `);
   return rows;

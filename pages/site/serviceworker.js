@@ -4,27 +4,27 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-var CACHE_STATIC = 'static-v018';
+var CACHE_STATIC = 'static-v019';
 
 self.addEventListener('install', function (event) {
   self.skipWaiting();
-  console.log('Installing Service Worker ...', event);
+  // console.log('Installing Service Worker ...', event);
   event.waitUntil(
     caches.open(CACHE_STATIC).then(function (cache) {
-      console.log('Precaching App Shell');
+      // console.log('Precaching App Shell');
       cache.addAll(['/login.html', '/login.css', '/offLine.html']);
     })
   );
 });
 
 self.addEventListener('activate', function (event) {
-  console.log('Activating Service Worker ....', event);
+  // console.log('Activating Service Worker ....', event);
   event.waitUntil(
     caches.keys().then(function (keyList) {
       return Promise.all(
         keyList.map(function (key) {
           if (key !== CACHE_STATIC) {
-            console.log('Removing old cache.', key);
+            // console.log('Removing old cache.', key);
             return caches.delete(key);
           }
         })

@@ -2,6 +2,7 @@ const db = require('../queries/qry_admin');
 const validate = require('../validations/val_admin');
 const ApiError = require('../error/ApiError');
 const func = require('../functions/fcn_admin');
+const { valid } = require('joi');
 
 // Users
 exports.user_view = async function (req, res, next) {
@@ -20,7 +21,7 @@ exports.user_view = async function (req, res, next) {
 exports.user_add = async function (req, res, next) {
   validate.user_add
     .validateAsync(req.body, { abortEarly: false })
-    .then(async (result) => func.hashPassword(result, 6))
+    .then(async (result) => func.hash_password(result, 6))
     .then((user) => db.user_add(user))
     .then((response) => res.status(200).json({ details: response }))
     .catch((err) => {
@@ -112,9 +113,10 @@ exports.course_view = async function (req, res, next) {
     });
 };
 exports.course_add = async function (req, res, next) {
-  validate.course_add
-    .validateAsync(req.body, { abortEarly: false })
-    .then((result) => db.course_add(result))
+  func
+    .get_coords(req.body)
+    .then((result) => validate.course_add.validateAsync(result, { abortEarly: false }))
+    .then((course) => db.course_add(course))
     .then((response) => res.status(200).json({ details: response }))
     .catch((err) => {
       if (err.name === `ValidationError`) {
@@ -123,6 +125,18 @@ exports.course_add = async function (req, res, next) {
         next(err);
       }
     });
+
+  // validate.course_add
+  //   .validateAsync(req.body, { abortEarly: false })
+  //   .then((result) => db.course_add(result))
+  //   .then((response) => res.status(200).json({ details: response }))
+  //   .catch((err) => {
+  //     if (err.name === `ValidationError`) {
+  //       next(ApiError.badRequest(err));
+  //     } else {
+  //       next(err);
+  //     }
+  //   });
 };
 exports.course_get_email = async function (req, res, next) {
   validate.course_get_email

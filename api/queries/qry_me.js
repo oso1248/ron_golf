@@ -24,7 +24,7 @@ async function playing_list(data) {
       LEFT JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
       WHERE use.id = ${data.user_id} AND ron.round_id IS NULL
       GROUP BY main.round_date, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course, use.handicap) AS z
-    ORDER BY z.round_date DESC, z.round_name DESC
+    ORDER BY z.round_date ASC, z.round_name DESC
   `);
   return rows;
 }
@@ -55,7 +55,7 @@ async function played_list(data) {
       JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
       WHERE ron.player_id = ${data.user_id}
       GROUP BY main.round_date, cor.name, cor.hole_count, cor.rating_course, ron.user_handicap, cor.rating_slope, cor.rating_course) AS z
-    ORDER BY z.round_date DESC, z.round_name DESC
+    ORDER BY z.round_date ASC, z.round_name DESC
     LIMIT 100
   `);
   return rows;

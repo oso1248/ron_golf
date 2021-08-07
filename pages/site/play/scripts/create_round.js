@@ -92,6 +92,10 @@ async function form_add(ev) {
   let response = await upload_add(data);
   alert(response);
   document.getElementById('form_add').reset();
+
+  if (localStorage.getItem('courses')) {
+    localStorage.removeItem('courses');
+  }
 }
 function read_add() {
   const form = document.getElementById('form_add');

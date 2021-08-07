@@ -1,3 +1,7 @@
 canvas {
   background-color: black;
 }
+
+.chart {
+  margin-bottom: 3rem;
+}

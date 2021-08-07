@@ -10,8 +10,29 @@ function getCookie(cookieName) {
 function deleteCookie(cookieName) {
   document.cookie = cookieName + '=; max-age=0; expires=0';
 }
+function setLocalWithExpiry(key, value, minutesToExpire) {
+  const item = {
+    value: value,
+    expiry: DateTime.local().plus({ minute: minutesToExpire }).toFormat(`MM-dd-yyyy HH:mm`),
+  };
+  localStorage.setItem(key, JSON.stringify(item));
+}
+function getLocalWithExpiry(key) {
+  const itemStr = localStorage.getItem(key);
+  if (!itemStr) {
+    return null;
+  }
+  const item = JSON.parse(itemStr);
+  if (DateTime.local().toFormat(`MM-dd-yyyy HH:mm`) > item.expiry) {
+    localStorage.removeItem(key);
+    return null;
+  }
+  return item.value;
+}
+
 let logoutRelocate = `/login.html`;
 async function logout() {
+  deleteCookie('perm');
   await fetch('/api/auth/logout', { method: 'post' })
     .then((res) => res.json())
     .then((data) => {
@@ -26,7 +47,6 @@ async function logout() {
             cache.delete('');
           });
         deleteCookie('BudApp');
-        deleteCookie('perm');
         window.location.replace(logoutRelocate);
         return;
       } else if (window.location != logoutRelocate) {
@@ -39,7 +59,6 @@ async function logout() {
             cache.delete('');
           });
         deleteCookie('BudApp');
-        deleteCookie('perm');
         window.location.replace(logoutRelocate);
         return;
       } else {
@@ -52,7 +71,6 @@ async function logout() {
             cache.delete('');
           });
         deleteCookie('BudApp');
-        deleteCookie('perm');
         window.location.replace(logoutRelocate);
       }
     })

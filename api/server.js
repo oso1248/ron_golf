@@ -17,6 +17,7 @@ const adminRouter = require('./routes/rts_admin');
 const courseRouter = require('./routes/rts_courses');
 const playRouter = require('./routes/rts_play');
 const meRouter = require('./routes/rts_me');
+const homeRouter = require('./routes/rts_home');
 
 server.use(express.json());
 server.use(cookie.sessionConfig);
@@ -30,6 +31,7 @@ server.use('/api/admin', permissions4, adminRouter);
 server.use('/api/course', permissions1, courseRouter);
 server.use('/api/play', permissions1, playRouter);
 server.use('/api/me', permissions1, meRouter);
+server.use('/api/home', permissions1, homeRouter);
 
 server.use(apiErrorHandler);
 

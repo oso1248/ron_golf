@@ -64,7 +64,7 @@ const course_add = Joi.object({
   phone: Joi.string()
     .pattern(new RegExp(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/))
     .required(),
-  email: Joi.string().allow(null).required().lowercase(),
+  email: Joi.string().allow(``).lowercase().default(``),
   rating_course: Joi.string()
     .pattern(new RegExp(/^\d{0,3}(\.\d{1,2})?$/))
     .required(),
@@ -78,6 +78,8 @@ const course_add = Joi.object({
     // .pattern(new RegExp(/^(\d+) ?([A-Za-z](?= ))? (.*?) ([^ ]+?) ?((?<= )APT)? ?((?<= )\d*)?$/))
     .pattern(new RegExp(/^[A-Za-z0-9 ]{1,120}$/))
     .required(),
+  latitude: Joi.number().required(),
+  longitude: Joi.number().required(),
 });
 const course_get_email = Joi.object({
   email: Joi.string()

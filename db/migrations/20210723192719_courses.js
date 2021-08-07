@@ -9,6 +9,8 @@ exports.up = function (knex) {
       tbl.decimal('rating_course', 8, 2).notNullable().defaultTo(0);
       tbl.decimal('rating_slope', 8, 2).notNullable().defaultTo(0);
       tbl.integer('hole_count', 8).notNullable().defaultTo(0);
+      tbl.decimal('latitude', 10, 7).notNullable().defaultTo(0);
+      tbl.decimal('longitude', 10, 7).notNullable().defaultTo(0);
       tbl.timestamps(true, true);
     })
     .createTable('course_holes', (tbl) => {

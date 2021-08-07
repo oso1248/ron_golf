@@ -7,6 +7,14 @@ exports.up = async function (knex) {
     FOR EACH ROW
     EXECUTE PROCEDURE update_timestamp();
   `);
+  await knex.raw(`
+    CREATE TRIGGER update_handicap
+    AFTER INSERT
+    ON round
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_user_handicap();
+  `);
+
   //Courses
   await knex.raw(`
     CREATE TRIGGER update_timestamp

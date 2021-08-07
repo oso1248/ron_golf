@@ -33,6 +33,41 @@ exports.up = async function (knex) {
     $$;
   `);
 
+  // Update handicap
+  await knex.raw(`
+   CREATE OR REPLACE FUNCTION update_user_handicap() RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE 
+	    user_id INTEGER;
+    BEGIN
+
+	    user_id = new.player_id;
+
+      UPDATE users
+      SET handicap = (
+        SELECT FLOOR(AVG(q.handicap))
+        FROM
+          (SELECT z.handicap
+          FROM
+            (SELECT SUM(ron.strokes) - SUM(hol.hole_par) AS handicap
+            FROM users AS use
+            JOIN round AS ron ON ron.player_id = use.id
+            JOIN course_holes AS hol ON hol.id = ron.hole_id
+            WHERE ron.player_id = 1
+            GROUP BY ron.course_id, ron.created_at
+            ORDER BY ron.created_at DESC
+            LIMIT 20) AS z
+            ORDER BY z.handicap ASC
+            LIMIT 8) AS q)
+      WHERE id = user_id;
+
+    RETURN NULL;
+    END;
+    $$;
+  `);
+
   // session delete orphan sessions
   await knex.raw(`
     CREATE OR REPLACE FUNCTION delete_orphan_sessions() RETURNS TRIGGER

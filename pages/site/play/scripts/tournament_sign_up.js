@@ -102,9 +102,12 @@ async function form_add(ev) {
     return;
   }
 
-  upload_add(send_data);
+  await upload_add(send_data);
   tournament_name_load_select();
   document.getElementById('form_add').reset();
+  if (localStorage.getItem('courses')) {
+    localStorage.removeItem('courses');
+  }
 }
 function read_add() {
   const form = document.getElementById('form_add');

@@ -17,9 +17,9 @@ async function form_add() {
   let fails = await validate_add(data);
   if (fails.length > 0) {
     alert(`Problems:\n ${fails}`);
-
     return;
   }
+
   upload_add(data);
 }
 function read_add() {
