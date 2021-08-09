@@ -47,7 +47,7 @@ async function course_name_selected(ev) {
   }
   document.getElementById('hole_get_div').style.display = 'block';
   axios
-    .post('/api/admin/hole_get_name', data)
+    .post('/api/course/hole_get_name', data)
     .then((res) => {
       let tableData = res.data.details;
       tbl_view = new Tabulator('#user_view_table', {

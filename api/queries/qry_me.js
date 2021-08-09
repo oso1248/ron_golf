@@ -20,7 +20,7 @@ async function playing_list(data) {
       FROM course_main AS cor
       JOIN course_holes AS hol ON hol.course_id = cor.id
       JOIN round_main AS main ON main.course_id = cor.id
-      JOIN users AS use ON use.id = main.player_id
+      JOIN users AS use ON use.id = main.user_id
       LEFT JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
       WHERE use.id = ${data.user_id} AND ron.round_id IS NULL
       GROUP BY main.round_date, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course, use.handicap) AS z
@@ -41,7 +41,7 @@ async function played_list(data) {
       JOIN tournament_main AS main ON main.course_id = cor.id
       JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
       JOIN users AS use ON use.id = lin.user_id
-      JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id
+      JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id AND ron.user_id = use.id
       WHERE lin.user_id = ${data.user_id}
       GROUP BY main.tournament_date, main.name, cor.name, cor.hole_count, cor.rating_course, ron.user_handicap, cor.rating_slope, cor.rating_course
     UNION ALL
@@ -51,11 +51,11 @@ async function played_list(data) {
       FROM course_main AS cor
       JOIN course_holes AS hol ON hol.course_id = cor.id
       JOIN round_main AS main ON main.course_id = cor.id
-      JOIN users AS use ON use.id = main.player_id
-      JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
-      WHERE ron.player_id = ${data.user_id}
+      JOIN users AS use ON use.id = main.user_id
+      JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id AND ron.user_id = use.id
+      WHERE ron.user_id = ${data.user_id}
       GROUP BY main.round_date, cor.name, cor.hole_count, cor.rating_course, ron.user_handicap, cor.rating_slope, cor.rating_course) AS z
-    ORDER BY z.round_date ASC, z.round_name DESC
+    ORDER BY z.round_date ASC, z.round_name ASC
     LIMIT 100
   `);
   return rows;
@@ -79,9 +79,9 @@ async function details_round_list(data) {
       FROM course_main AS cor
       JOIN course_holes AS hol ON hol.course_id = cor.id
       JOIN round_main AS main ON main.course_id = cor.id
-      JOIN users AS use ON use.id = main.player_id
+      JOIN users AS use ON use.id = main.user_id
       JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
-      WHERE ron.player_id = ${data.user_id}
+      WHERE ron.user_id = ${data.user_id}
       GROUP BY main.id, main.round_date) AS z
     ORDER BY z.round_date ASC, z.round_name DESC
   `);
@@ -95,16 +95,16 @@ async function details_round_id(data) {
       FROM course_main AS cor
       JOIN course_holes AS hol ON hol.course_id = cor.id
       JOIN round_main AS main ON main.course_id = cor.id
-      JOIN users AS use ON use.id = main.player_id
+      JOIN users AS use ON use.id = main.user_id
       JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
-      WHERE ron.player_id = ${data.user_id} AND ron.round_id = ${data.round_id})) AS course_handicap
+      WHERE ron.user_id = ${data.user_id} AND ron.round_id = ${data.round_id})) AS course_handicap
         
     FROM course_main AS cor
     JOIN course_holes AS hol ON hol.course_id = cor.id
     JOIN round_main AS main ON main.course_id = cor.id
-    JOIN users AS use ON use.id = main.player_id
+    JOIN users AS use ON use.id = main.user_id
     JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
-    WHERE ron.player_id = ${data.user_id} AND ron.round_id = ${data.round_id}
+    WHERE ron.user_id = ${data.user_id} AND ron.round_id = ${data.round_id}
     ORDER BY hol.hole_handicap
   `);
   return rows;

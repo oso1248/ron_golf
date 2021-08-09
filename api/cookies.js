@@ -13,8 +13,8 @@ const sessionConfig = session({
   secret: process.env.SECRET,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 180,
-    secure: false,
-    // secure: process.env.NODE_ENV === 'production' ? true : false,
+    // secure: false,
+    secure: process.env.NODE_ENV === 'development' ? false : true,
     httpOnly: true,
     sameSite: true,
   },

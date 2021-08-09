@@ -25,7 +25,7 @@ exports.up = function (knex) {
     .createTable('round_main', (tbl) => {
       tbl.increments();
       tbl.integer('course_id').unsigned().notNullable().references('id').inTable('course_main').onDelete('CASCADE').onUpdate('CASCADE');
-      tbl.integer('player_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+      tbl.integer('user_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
       tbl.date('round_date', 128).notNullable();
       tbl.timestamps(true, true);
     })
@@ -45,7 +45,7 @@ exports.up = function (knex) {
     .createTable('round', (tbl) => {
       tbl.increments();
       tbl.integer('course_id').unsigned().notNullable().references('id').inTable('course_main').onDelete('CASCADE').onUpdate('CASCADE');
-      tbl.integer('player_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+      tbl.integer('user_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
       tbl.integer('hole_id').unsigned().notNullable().references('id').inTable('course_holes').onDelete('CASCADE').onUpdate('CASCADE');
       tbl.integer('tournament_id').unsigned().references('id').inTable('tournament_main').onDelete('CASCADE').onUpdate('CASCADE');
       tbl.integer('round_id').unsigned().references('id').inTable('round_main').onDelete('CASCADE').onUpdate('CASCADE');

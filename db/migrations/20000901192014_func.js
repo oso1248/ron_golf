@@ -33,35 +33,78 @@ exports.up = async function (knex) {
     $$;
   `);
 
-  // Update handicap
+  // User handicap
   await knex.raw(`
    CREATE OR REPLACE FUNCTION update_user_handicap() RETURNS TRIGGER
     LANGUAGE plpgsql
     AS
     $$
     DECLARE 
-	    user_id INTEGER;
+	    id_user INTEGER;
     BEGIN
 
-	    user_id = new.player_id;
+	    id_user = new.user_id;
 
-      UPDATE users
-      SET handicap = (
-        SELECT FLOOR(AVG(q.handicap))
+      if (
+        SELECT COUNT(*)
         FROM
-          (SELECT z.handicap
+        (SELECT SUM(ron.strokes) - SUM(hol.hole_par) AS handicap
+        FROM users AS use
+        JOIN round AS ron ON ron.user_id = use.id
+        JOIN course_holes AS hol ON hol.id = ron.hole_id
+        WHERE ron.user_id = id_user
+        GROUP BY ron.course_id, ron.created_at
+        ORDER BY ron.created_at DESC
+        LIMIT 20) AS c
+      ) = 3
+
+      THEN
+
+        UPDATE users
+        SET handicap = (
+          SELECT FLOOR(AVG(q.handicap))
           FROM
-            (SELECT SUM(ron.strokes) - SUM(hol.hole_par) AS handicap
-            FROM users AS use
-            JOIN round AS ron ON ron.player_id = use.id
-            JOIN course_holes AS hol ON hol.id = ron.hole_id
-            WHERE ron.player_id = 1
-            GROUP BY ron.course_id, ron.created_at
-            ORDER BY ron.created_at DESC
-            LIMIT 20) AS z
-            ORDER BY z.handicap ASC
-            LIMIT 8) AS q)
-      WHERE id = user_id;
+            (SELECT z.handicap
+            FROM
+              (SELECT SUM(ron.strokes) - SUM(hol.hole_par) AS handicap
+              FROM users AS use
+              JOIN round AS ron ON ron.user_id = use.id
+              JOIN course_holes AS hol ON hol.id = ron.hole_id
+              WHERE ron.user_id = id_user
+              GROUP BY ron.course_id, ron.created_at
+              ORDER BY ron.created_at DESC
+              LIMIT 20) AS z
+              ORDER BY z.handicap ASC
+              LIMIT 8) AS q)
+        WHERE id = id_user;
+
+      END IF;
+      
+    RETURN null;
+    END;
+    $$;
+  `);
+
+  await knex.raw(`
+   CREATE OR REPLACE FUNCTION update_round_handicap() RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE 
+	    ron_id INTEGER;
+    BEGIN
+
+	    ron_id = new.id;
+
+      UPDATE round
+      SET user_handicap = 
+        (SELECT FLOOR((ron.user_handicap * (cor.rating_slope / 113)) + (cor.rating_course - SUM(hol.hole_par)))
+        FROM round as ron
+        JOIN course_main AS cor ON cor.id = ron.course_id
+        JOIN course_holes AS hol ON hol.course_id = cor.id
+        WHERE ron.id = ron_id
+        GROUP BY ron.user_handicap, cor.rating_slope, cor.rating_course)
+      WHERE id = ron_id;
 
     RETURN NULL;
     END;
@@ -83,17 +126,50 @@ exports.up = async function (knex) {
 
   // Delete Old Rows
   await knex.raw(`
+    CREATE OR REPLACE FUNCTION delete_old_round_main() RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS
+    $$
+    BEGIN
+      DELETE FROM round_main WHERE id IN 
+      (SELECT main.id
+      FROM round_main AS main
+      FULL JOIN round AS ron ON ron.round_id = main.id
+      WHERE ron.round_id IS NULL AND main.round_date < CURRENT_DATE);
+    RETURN NULL;
+    END;
+    $$;
+  `);
+  await knex.raw(`
     CREATE OR REPLACE FUNCTION delete_old_rows_rounds() RETURNS TRIGGER
     LANGUAGE plpgsql
     AS
     $$
     BEGIN
       DELETE FROM round WHERE created_at < NOW() - INTERVAL '1095 days';
-      RETURN NULL;
+    RETURN NULL;
     END;
     $$;
   `);
 
+  await knex.raw(`
+    CREATE OR REPLACE FUNCTION delete_old__tournament_main() RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS
+    $$
+    BEGIN
+    
+      DELETE FROM tournament_main WHERE id IN
+      (SELECT main.id
+      FROM tournament_main AS main
+      LEFT JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
+      LEFT JOIN round AS ron ON ron.tournament_id = main.id
+      WHERE ron.tournament_id IS NULL AND main.tournament_date < CURRENT_DATE);
+
+    RETURN NULL;
+    END;
+    $$;
+  `);
   await knex.raw(`
     CREATE OR REPLACE FUNCTION delete_old_rows_tournament_main() RETURNS TRIGGER
     LANGUAGE plpgsql

@@ -133,7 +133,6 @@ async function upload_add(data) {
     .post('/api/play/tournament_sign_up', data)
     .then((res) => {
       document.getElementById('form_add').reset();
-      tournament_name_load_select();
       alert(`${res.data.details[0].user_name}\nPlaying\n${res.data.details[0].tournament_name}\nOn\n${res.data.details[0].tournament_date}\nAT\n${res.data.details[0].course_name}`);
     })
     .catch((err) => {

@@ -8,11 +8,26 @@ exports.up = async function (knex) {
     EXECUTE PROCEDURE update_timestamp();
   `);
   await knex.raw(`
-    CREATE TRIGGER update_handicap
+    CREATE TRIGGER update_handicap_round
+    AFTER INSERT
+    ON round_main
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_user_handicap();
+  `);
+  await knex.raw(`
+    CREATE TRIGGER update_handicap_tournament
+    AFTER INSERT
+    ON tournament_lineup
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_user_handicap();
+  `);
+
+  await knex.raw(`
+    CREATE TRIGGER set_round_handicap
     AFTER INSERT
     ON round
     FOR EACH ROW
-    EXECUTE PROCEDURE update_user_handicap();
+    EXECUTE PROCEDURE update_round_handicap();
   `);
 
   //Courses
@@ -52,6 +67,20 @@ exports.up = async function (knex) {
     ON tournament_main
     FOR EACH ROW
     EXECUTE PROCEDURE delete_old_rows_tournament_main();
+  `);
+  await knex.raw(`
+    CREATE TRIGGER delete_old_tournament_main_trigger
+    AFTER INSERT
+    ON tournament_main
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_old__tournament_main();
+  `);
+  await knex.raw(`
+    CREATE TRIGGER delete_old_rows_round_main_trigger
+    AFTER INSERT
+    ON round_main
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_old_round_main();
   `);
 };
 

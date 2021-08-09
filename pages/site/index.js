@@ -67,7 +67,7 @@ async function get_next_up() {
   await axios
     .post('/api/home/course_next_weather')
     .then((res) => {
-      setLocalWithExpiry(`courses`, res.data.details, 90);
+      setLocalWithExpiry(`courses`, res.data.details, 480);
       load_widgets();
       return res;
     })
@@ -131,9 +131,9 @@ function view(courses) {
 document.addEventListener('DOMContentLoaded', async (ev) => {
   if (!getLocalWithExpiry(`courses`)) {
     get_next_up();
-    console.log(`from download`);
+    // console.log(`from download`);
   } else if (getLocalWithExpiry(`courses`)) {
     load_widgets();
-    console.log('from local');
+    // console.log('from local');
   }
 });

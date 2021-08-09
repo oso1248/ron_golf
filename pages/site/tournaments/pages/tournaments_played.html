@@ -4,24 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width, height=device-height" />
 
-    <script src="../../dist/xlsx.min.js" type="text/javascript"></script>
     <script src="../../dist/axios.min.js" type="text/javascript"></script>
+    <script src="../../dist/xlsx.min.js" type="text/javascript"></script>
     <script src="../../dist/tabulator.min.js" type="text/javascript"></script>
-
     <link rel="stylesheet" href="../../dist/tabulator.min.css" />
+    <script src="../../dist/luxon.min.js"></script>
+
     <link rel="stylesheet" href="../../commonCSS/styles.css" />
-    <link rel="stylesheet" href="../styles/me_playing.css" />
-    <title>Playing</title>
+    <link rel="stylesheet" href="../styles/tournaments_played.css" />
+    <title>Tournaments Played</title>
   </head>
   <body>
     <div class="section section__nav">
-      <h1 class="header header__main">Playing</h1>
+      <h1 class="header header__main">Tournaments Played</h1>
       <nav class="main-nav">
         <ul class="">
           <li><a href="../../index.html">Home</a></li>
           <li style="display: block" id=""><a href="../../tournaments/pages/tournaments_home.html">Tournaments</a></li>
           <li style="display: block" id=""><a href="../../courses/pages/courses_home.html">Courses</a></li>
-          <li style="display: block" id=""><a href="./me_home.html">me</a></li>
+          <li style="display: block" id=""><a href="../../me/pages/me_home.html">me</a></li>
           <li style="display: block" id=""><a href="../../play/pages/play_home.html">Play</a></li>
           <li style="display: none" id="perm4"><a href="../../admin/pages/admin_home.html">Admin</a></li>
           <li><a id="logout">Log Out</a></li>
@@ -29,10 +30,29 @@
       </nav>
     </div>
 
-    <div class="section section_table">
-      <div id="user_view" class="boxxes">
-        <h1 class="headers">Playing</h1>
-        <div id="view_table" class="table"></div>
+    <div class="section section_form">
+      <form class="form" id="form_add" autocorrect="off" spellcheck="false" autocomplete="off" action="">
+        <h1>Tournament List</h1>
+        <div class="input">
+          <select name="" id="tournament_id"></select>
+        </div>
+        <div class="input">
+          <input readonly name="" id="course_name" placeholder="Course"></input>
+        </div>
+        <div class="input">
+          <input readonly name="" id="tournament_date" placeholder="Date"></input>
+        </div>
+        <div class="button">
+          <button class="btn" id="btnClear">Clear</button>
+          <button class="btn" id="btnSubmit">Get Details</button>
+        </div>
+      </form>
+    </div>
+
+    <div style="display: none" class="section section_table" id="tournament_score_div">
+      <div id="tournament_view" class="boxxes">
+        <h1 class="headers">Tournament</h1>
+        <div id="tournament_score_table" class="table"></div>
         <div class="button btnLabel">
           <button class="btn btnMobile" id="xlsx_table">Save XLSX</button>
           <button class="btn btnMobile" id="print_table">Print Table</button>
@@ -41,6 +61,6 @@
     </div>
 
     <script src="../../commonJS/index.js"></script>
-    <script src="../scripts/me_playing.js"></script>
+    <script src="../scripts/tournaments_played.js"></script>
   </body>
 </html>

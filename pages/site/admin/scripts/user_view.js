@@ -7,7 +7,7 @@ function user_view() {
       // console.log('headers: ', res.headers);
       let tableData = res.data.details;
       tbl_view = new Tabulator('#user_view_table', {
-        printHeader: '<h1>Golfers<h1>',
+        printHeader: '<h1>Tournaments<h1>',
         resizableColumns: false,
         selectable: false,
         height: '100%',

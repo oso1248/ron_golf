@@ -5,12 +5,12 @@ async function round_add(data) {
   let { rows } = await db.raw(`
     WITH rows AS (
       INSERT
-      INTO round_main (course_id, player_id, round_date)
+      INTO round_main (course_id, user_id, round_date)
       VALUES ((SELECT id FROM course_main WHERE name = '${data.course_name}' ), ${data.user_id}, '${data.round_date}')
-      RETURNING player_id, course_id, round_date)
+      RETURNING user_id, course_id, round_date)
     SELECT u.name AS user_name, c.name AS course_name, TO_CHAR( rows.round_date, 'MM-DD-YYYY') AS round_date
     FROM rows
-    JOIN users AS u ON u.id = rows.player_id
+    JOIN users AS u ON u.id = rows.user_id
     JOIN course_main AS c ON c.id = rows.course_id
   `);
   return rows;
@@ -61,39 +61,40 @@ async function round_list(data) {
   let { rows } = await db.raw(`
     SELECT * FROM
       (SELECT CAST(COALESCE(null, 0) AS INT) AS round_id, main.id AS tournament_id, TO_CHAR( main.tournament_date, 'MM-DD-YYYY') AS round_date, main.name AS round_name, cor.name AS course_name
-          FROM course_main AS cor
-        JOIN course_holes AS hol ON hol.course_id = cor.id
-        JOIN tournament_main AS main ON main.course_id = cor.id
-        JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
-        LEFT JOIN round AS ron ON ron.tournament_id = main.id
-        WHERE lin.user_id = ${data.user_id} AND ron.tournament_id IS NULL
-        GROUP BY main.id, main.tournament_date, main.name, cor.name
+		FROM course_main AS cor
+		JOIN course_holes AS hol ON hol.course_id = cor.id
+		JOIN tournament_main AS main ON main.course_id = cor.id
+		JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
+		LEFT JOIN round AS ron ON ron.tournament_id = main.id AND lin.user_id = ron.user_id
+		WHERE lin.user_id = ${data.user_id} AND ron.user_id IS NULL
+		GROUP BY main.id, main.tournament_date, main.name, cor.name
       UNION ALL
       SELECT ron.id AS round_id, CAST(COALESCE(null, 0) AS INT) AS tournament_id, TO_CHAR( ron.round_date, 'MM-DD-YYYY') AS round_date, CAST(COALESCE(null, 'private round') AS VARCHAR) AS round_name,  cor.name AS course_name
           FROM course_main AS cor
           JOIN course_holes AS hol ON hol.course_id = cor.id
           JOIN round_main AS ron ON ron.course_id = cor.id
-          LEFT JOIN round AS ply ON ply.player_id = ron.player_id AND ply.round_id = ron.id
-          WHERE ron.player_id = ${data.user_id} AND ply.round_id IS NULL
+          LEFT JOIN round AS ply ON ply.user_id = ron.user_id AND ply.round_id = ron.id
+          WHERE ron.user_id = ${data.user_id} AND ply.round_id IS NULL
           GROUP BY ron.id, ron.round_date, CAST(COALESCE(null, 'private round') AS VARCHAR), cor.name) AS z
     ORDER BY z.round_date ASC
+
   `);
   return rows;
 }
 async function round_get_id(data) {
   let { rows } = await db.raw(`
-    SELECT cor.name AS course_name, TO_CHAR( main.round_date, 'MM-DD-YYYY') AS round_date, CAST(COALESCE(null, 'private round') AS VARCHAR) AS round_name, hol.hole_number, hol.hole_par, cor.id AS course_id, use.id AS player_id, hol.id AS hole_id, CAST(COALESCE(null, 0) AS INT) AS tournament_id, main.id AS round_id, CAST(COALESCE(null, 0) AS INT) AS strokes, use.handicap 
+    SELECT cor.name AS course_name, TO_CHAR( main.round_date, 'MM-DD-YYYY') AS round_date, CAST(COALESCE(null, 'private round') AS VARCHAR) AS round_name, hol.hole_number, hol.hole_par, cor.id AS course_id, use.id AS user_id, hol.id AS hole_id, CAST(COALESCE(null, 0) AS INT) AS tournament_id, main.id AS round_id, CAST(COALESCE(null, 0) AS INT) AS strokes, use.handicap 
     FROM round_main AS main
     JOIN course_main AS cor ON cor.id = main.course_id
     JOIN course_holes AS hol ON hol.course_id = cor.id
-    JOIN users AS use ON use.id = main.player_id 
-    WHERE main.id = ${data.round_id} AND main.player_id = ${data.user_id}
+    JOIN users AS use ON use.id = main.user_id 
+    WHERE main.id = ${data.round_id} AND main.user_id = ${data.user_id}
   `);
   return rows;
 }
 async function tournament_get_id(data) {
   let { rows } = await db.raw(`
-    SELECT cor.name AS course_name, TO_CHAR( main.tournament_date, 'MM-DD-YYYY') AS round_date, main.name AS round_name, hol.hole_number, hol.hole_par, cor.id AS course_id, use.id AS player_id, hol.id AS hole_id, main.id AS tournament_id, CAST(COALESCE(null, 0) AS INT) AS round_id, CAST(COALESCE(null, 0) AS INT) AS strokes, use.handicap 
+    SELECT cor.name AS course_name, TO_CHAR( main.tournament_date, 'MM-DD-YYYY') AS round_date, main.name AS round_name, hol.hole_number, hol.hole_par, cor.id AS course_id, use.id AS user_id, hol.id AS hole_id, main.id AS tournament_id, CAST(COALESCE(null, 0) AS INT) AS round_id, CAST(COALESCE(null, 0) AS INT) AS strokes, use.handicap 
     FROM tournament_lineup AS lin
     JOIN tournament_main AS main ON main.id = lin.tournament_id
     JOIN course_main AS cor ON cor.id = main.course_id
@@ -107,7 +108,7 @@ async function score_upload(data) {
   let { rows } = await db.raw(`
     WITH rows AS (
     INSERT
-      INTO round (course_id, player_id, hole_id, tournament_id, round_id, strokes, user_handicap)
+      INTO round (course_id, user_id, hole_id, tournament_id, round_id, strokes, user_handicap)
       VALUES ${data.values}
       RETURNING course_id, hole_id)
     SELECT main.name, COUNT(hole_id)

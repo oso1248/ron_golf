@@ -18,8 +18,8 @@ async function course_next() {
           FROM course_main AS cor
           JOIN course_holes AS hol ON hol.course_id = cor.id
           JOIN round_main AS ron ON ron.course_id = cor.id
-          LEFT JOIN round AS ply ON ply.player_id = ron.player_id AND ply.round_id = ron.id
-          WHERE ron.player_id = 1 AND ply.round_id IS NULL AND ron.round_date >= CURRENT_DATE AND ron.round_date < CURRENT_DATE + 8
+          LEFT JOIN round AS ply ON ply.user_id = ron.user_id AND ply.round_id = ron.id
+          WHERE ron.user_id = 1 AND ply.round_id IS NULL AND ron.round_date >= CURRENT_DATE AND ron.round_date < CURRENT_DATE + 8
           GROUP BY ron.id, ron.round_date, CAST(COALESCE(null, 'private round') AS VARCHAR), cor.name, cor.latitude, cor.longitude) AS z
     ORDER BY z.round_date ASC
 	  LIMIT 4

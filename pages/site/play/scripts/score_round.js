@@ -197,10 +197,10 @@ function shape_data(data) {
       course_id = 0;
     }
 
-    let player_id = `${elem.player_id}`;
-    player_id = player_id.toNonAlpha(false).cutLeadingZeros();
-    if (player_id === ``) {
-      player_id = 0;
+    let user_id = `${elem.user_id}`;
+    user_id = user_id.toNonAlpha(false).cutLeadingZeros();
+    if (user_id === ``) {
+      user_id = 0;
     }
 
     let hole_id = `${elem.hole_id}`;
@@ -231,7 +231,7 @@ function shape_data(data) {
       handicap = 0;
     }
 
-    let string_elem = `(${course_id},${player_id},${hole_id},${tournament_id},${round_id},${strokes},${handicap}),`;
+    let string_elem = `(${course_id},${user_id},${hole_id},${tournament_id},${round_id},${strokes},${handicap}),`;
     string_value = string_value + string_elem;
   });
   string_value = string_value.slice(0, -1);
