@@ -21,7 +21,6 @@ exports.up = async function (knex) {
     FOR EACH ROW
     EXECUTE PROCEDURE update_user_handicap();
   `);
-
   await knex.raw(`
     CREATE TRIGGER set_round_handicap
     AFTER INSERT
@@ -68,17 +67,34 @@ exports.up = async function (knex) {
     FOR EACH ROW
     EXECUTE PROCEDURE delete_old_rows_tournament_main();
   `);
+
+  // delete unplayed rounds
   await knex.raw(`
     CREATE TRIGGER delete_old_tournament_main_trigger
     AFTER INSERT
     ON tournament_main
     FOR EACH ROW
-    EXECUTE PROCEDURE delete_old__tournament_main();
+    EXECUTE PROCEDURE delete_old_tournament_main();
   `);
   await knex.raw(`
-    CREATE TRIGGER delete_old_rows_round_main_trigger
+    CREATE TRIGGER delete_old_tournament_main_trigger
     AFTER INSERT
     ON round_main
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_old_tournament_main();
+  `);
+
+  await knex.raw(`
+    CREATE TRIGGER delete_old_round_main_trigger
+    AFTER INSERT
+    ON round_main
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_old_round_main();
+  `);
+  await knex.raw(`
+    CREATE TRIGGER delete_old_round_main_trigger
+    AFTER INSERT
+    ON tournament_main
     FOR EACH ROW
     EXECUTE PROCEDURE delete_old_round_main();
   `);

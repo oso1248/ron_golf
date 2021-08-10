@@ -32,6 +32,9 @@ function getLocalWithExpiry(key) {
 
 let logoutRelocate = `/login.html`;
 async function logout() {
+  if (localStorage.getItem('courses')) {
+    localStorage.removeItem('courses');
+  }
   deleteCookie('perm');
   await fetch('/api/auth/logout', { method: 'post' })
     .then((res) => res.json())

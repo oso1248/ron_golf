@@ -11,8 +11,8 @@ async function playing_list(data) {
       JOIN tournament_main AS main ON main.course_id = cor.id
       JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
       JOIN users AS use ON use.id = lin.user_id
-      LEFT JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id
-      WHERE use.id = ${data.user_id} AND ron.round_id IS NULL
+      LEFT JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id AND ron.user_id = use.id
+      WHERE use.id = ${data.user_id} AND ron.tournament_id IS NULL
       GROUP BY main.tournament_date, main.name, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course, use.handicap
     UNION ALL
       SELECT TO_CHAR(main.round_date, 'mm-dd-yyyy') AS round_date, CAST(COALESCE(null, 'private round') AS VARCHAR) AS round_name, cor.name AS course_name, cor.hole_count, SUM(hol.hole_par) AS course_par, SUM(hol.hole_distance) AS course_distance, cor.rating_course, SUM(hol.hole_par) AS hole_par, use.handicap AS user_handicap,
@@ -21,7 +21,7 @@ async function playing_list(data) {
       JOIN course_holes AS hol ON hol.course_id = cor.id
       JOIN round_main AS main ON main.course_id = cor.id
       JOIN users AS use ON use.id = main.user_id
-      LEFT JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id
+      LEFT JOIN round AS ron ON ron.round_id = main.id AND ron.hole_id = hol.id AND ron.user_id = use.id
       WHERE use.id = ${data.user_id} AND ron.round_id IS NULL
       GROUP BY main.round_date, cor.name, cor.hole_count, cor.rating_course, use.handicap, cor.rating_slope, cor.rating_course, use.handicap) AS z
     ORDER BY z.round_date ASC, z.round_name DESC
@@ -119,7 +119,7 @@ async function details_tournament_id(data) {
       JOIN tournament_main AS main ON main.course_id = cor.id
       JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
       JOIN users AS use ON use.id = lin.user_id
-      JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id
+      JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id AND ron.user_id = use.id
       WHERE lin.user_id = ${data.user_id} AND ron.tournament_id = ${data.tournament_id}))) AS course_handicap
       
     FROM course_main AS cor
@@ -127,7 +127,7 @@ async function details_tournament_id(data) {
     JOIN tournament_main AS main ON main.course_id = cor.id
     JOIN tournament_lineup AS lin ON lin.tournament_id = main.id
     JOIN users AS use ON use.id = lin.user_id
-    JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id
+    JOIN round AS ron ON ron.tournament_id = main.id AND ron.hole_id = hol.id AND ron.user_id = use.id
     WHERE lin.user_id = ${data.user_id} AND ron.tournament_id = ${data.tournament_id}
     ORDER BY hol.hole_handicap
   `);

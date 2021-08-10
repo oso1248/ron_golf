@@ -153,7 +153,7 @@ exports.up = async function (knex) {
   `);
 
   await knex.raw(`
-    CREATE OR REPLACE FUNCTION delete_old__tournament_main() RETURNS TRIGGER
+    CREATE OR REPLACE FUNCTION delete_old_tournament_main() RETURNS TRIGGER
     LANGUAGE plpgsql
     AS
     $$

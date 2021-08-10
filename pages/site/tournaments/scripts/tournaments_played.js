@@ -120,7 +120,7 @@ async function get_tournament(data) {
     .then((res) => {
       let tableData = res.data.details;
       tournament_view = new Tabulator('#tournament_score_table', {
-        printHeader: `<h1>${tableData[0].tournament_date} ${tableData[0].tournament_name}<h1>`,
+        printHeader: `<h1>${tableData[0].tournament_date} ${tableData[0].tournament_name} ${tableData[0].course_name}<h1>`,
         resizableColumns: false,
         selectable: false,
         height: '100%',
@@ -129,8 +129,9 @@ async function get_tournament(data) {
         columns: [
           // { title: 'Date', field: 'tournament_date', hozAlign: 'center', frozen: true },
           // { title: 'Name', field: 'tournament_name', hozAlign: 'center', frozen: true },
-          { title: 'Course', field: 'course_name', hozAlign: 'center', frozen: true },
-          { title: 'Player', field: 'user_name', hozAlign: 'center' },
+          // { title: 'Course', field: 'course_name', hozAlign: 'center', frozen: true },
+          { title: 'Rank', field: 'rankings', hozAlign: 'center', frozen: true },
+          { title: 'Player', field: 'user_name', hozAlign: 'center', frozen: true },
           // { title: 'Holes', field: 'hole_count', hozAlign: 'center' },
           { title: 'Par', field: 'course_par', hozAlign: 'center' },
           // { title: 'Distance', field: 'course_distance', hozAlign: 'center' },
